@@ -1,0 +1,6 @@
+keepalived:
+  virtual_router_id: 100
+  interface: "eth0"
+  advert_int: 4
+  priority: 100
+  auth_pass: "foo123bar"

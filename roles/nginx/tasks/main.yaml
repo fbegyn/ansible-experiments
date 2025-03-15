@@ -7,8 +7,16 @@
     - "nginx"
     - "keepalived"
   notify:
-    - "enable nginx"
-    - "enable keepalived"
+    - "start nginx"
+    - "start keepalived"
+
+- name: "ensure services enabled"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+  with_items:
+    - "nginx"
+    - "keepalived"
 
 - name: "nginx | allow http on firewalld"
   ansible.posix.firewalld:
@@ -16,6 +24,12 @@
     permanent: true
     immediate: true
     state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
   notify:
     - "reload firewalld"
 
@@ -25,8 +39,29 @@
     permanent: true
     immediate: true
     state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
   notify:
     - "reload firewalld"
+
+- name: "keepalived | create keepalived_script group"
+  ansible.builtin.group:
+    name: "keepalived_script"
+    state: "present"
+
+- name: "keepalived | create keepalived_script user"
+  ansible.builtin.user:
+    name: "keepalived_script"
+    groups: "keepalived_script"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
 
 - name: "keepalived | ensure script path"
   ansible.builtin.file:
@@ -38,16 +73,18 @@
     src: "check_nginx.sh"
     dest: "/usr/libexec/keepalived/scripts/check_nginx.sh"
     mode: '0755'
-    notify:
-      - "reload keepalived"
+    owner: "keepalived_script"
+    group: "keepalived_script"
+  notify:
+    - "reload keepalived"
 
 - name: "keepalived | template config"
   ansible.builtin.template:
     src: "keepalived.conf.j2"
     dest: "/etc/keepalived/keepalived.conf"
-    mode: '0755'
-    notify:
-      - "reload keepalived"
+    mode: '0644'
+  notify:
+    - "reload keepalived"
 
 - name: "ensure services started"
   ansible.builtin.service:

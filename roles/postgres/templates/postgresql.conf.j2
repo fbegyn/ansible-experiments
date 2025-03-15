@@ -1,0 +1,29 @@
+# this file is managed by ansible, resistance is futile
+
+# Listen addresses
+listen_addresses = '{{ postgres.listen_addresses }}'
+
+# Connection settings
+port = {{ postgres.port }}
+max_connections = {{ postgres.max_connections }}
+
+# Enable replication
+wal_level = {{ postgres.wal.level }}
+max_wal_senders = {{ postgres.wal.max_senders }}
+max_replication_slots = {{ postgres.max_replication_slots }}
+hot_standby = {{ postgres.hot_standby }}
+archive_mode = {{ postgres.archive.mode }}
+
+# Logging settings
+log_directory = '{{ postgres.log.directory }}'
+
+# Other recommended settings
+shared_buffers = {{ postgres.shared_buffers }}
+work_mem = {{ postgres.work_mem }}
+maintenance_work_mem = {{ postgres.maintenance_work_mem }}
+effective_cache_size = {{ postgres.effective_cache_size }}
+
+{% if postgres.standby_mode == 'on' %}
+# Standby configuration
+primary_conninfo = 'host={{ postgres.primary_address }} port={{ postgres.port }} user={{ postgres.replication.username }} password={{ postgres.replication.password }} application_name={{ postgres.replication.application_name }}'
+{% endif %}

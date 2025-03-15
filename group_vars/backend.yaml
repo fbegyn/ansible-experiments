@@ -1,0 +1,15 @@
+---
+keepalived:
+  virtual_router_id: 100
+  auth_pass: "hello12345world"
+  virtual_ip: "10.5.30.61"
+
+postgres:
+  primary_address: "10.5.30.53"
+  data_directory: "/var/lib/postgres/data"
+  listen_addresses: "*"
+  trusted_network: "10.5.0.0/16"
+  replication_network: "10.5.0.0/16"
+  replication:
+    username: "replication"
+    password: "replication"

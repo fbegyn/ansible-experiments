@@ -1,0 +1,40 @@
+keepalived:
+  virtual_router_id: 100
+  interface: "eth0"
+  advert_int: 4
+  priority: 100
+  auth_pass: "foo123bar"
+
+postgres:
+  primary_address: "127.0.0.1"
+  listen_addresses: "127.0.0.1"
+  port: 5432
+  unit_target: "default"
+  data_directory: "/var/lib/pgsql/data"
+  max_connections: 5
+  wal:
+    level: "replica"
+    max_senders: 5
+  max_replication_slots: 2
+  hot_standby: "on"
+  log:
+    directory: "/var/log/postgres"
+  shared_buffers: "128MB"
+  work_mem: "8MB"
+  maintenance_work_mem: "64MB"
+  effective_cache_size: "256MB"
+  archive:
+    mode: "off"
+    command: ""
+  replication_network: "127.0.0.0/8"
+  trusted_network: "127.0.0.0/8"
+  standby_mode: "off"
+  primary_conninfo: "host=127.0.0.1 port=5432 user=rep_user password=rep_pass application_name=standby"
+  recovery_target_timeline: "latest"
+  replication:
+    application_name: "foobar"
+    username: "hello"
+    password: "world"
+
+pgbouncer:
+  port: 6432

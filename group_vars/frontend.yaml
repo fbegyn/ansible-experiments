@@ -1,0 +1,5 @@
+---
+keepalived:
+  virtual_router_id: 100
+  auth_pass: "hello12345world"
+  virtual_ip: "10.5.30.60"

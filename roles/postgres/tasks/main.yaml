@@ -5,15 +5,255 @@
     state: "present"
   with_items:
     - "postgresql-server"
+    - "postgresql-contrib"
+    - "pgbouncer"
     - "keepalived"
-  notify:
-    - "start postgresql"
+
+- name: "ensure services enabled"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+  with_items:
+    - "pgbouncer"
+    - "keepalived"
 
 - name: "postgresql | allow postgresql on firewalld"
   ansible.posix.firewalld:
-    service: "postgresql"
+    port: "{{ postgres.port }}/tcp"
     permanent: true
     immediate: true
     state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
   notify:
     - "reload firewalld"
+
+- name: "pgbouncer | allow pgbouncer on firewalld"
+  ansible.posix.firewalld:
+    port: "{{ pgbouncer.port }}/tcp"
+    permanent: true
+    immediate: true
+    state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
+  notify:
+    - "reload firewalld"
+
+- name: "keepalived | create keepalived_script group"
+  ansible.builtin.group:
+    name: "keepalived_script"
+    state: "present"
+
+- name: "keepalived | create keepalived_script user"
+  ansible.builtin.user:
+    name: "keepalived_script"
+    groups: "keepalived_script"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+
+- name: "keepalived | ensure script path"
+  ansible.builtin.file:
+    dest: "/usr/libexec/keepalived/scripts"
+    state: "directory"
+
+- name: "keepalived | template config"
+  ansible.builtin.template:
+    src: "keepalived.conf.j2"
+    dest: "/etc/keepalived/keepalived.conf"
+    mode: '0644'
+  notify:
+    - "reload keepalived"
+
+- name: "postgresql | create postgres group"
+  ansible.builtin.group:
+    name: "postgres"
+    state: "present"
+
+- name: "postgresql | create postgresql user"
+  ansible.builtin.user:
+    name: "postgres"
+    groups: "postgres"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+
+- name: "postgresql | ensure PGDATA"
+  ansible.builtin.file:
+    dest: "{{ postgres.data_directory }}"
+    state: "directory"
+    owner: "postgres"
+    group: "postgres"
+    mode: "0750"
+
+- name: "postgresql | ensure log path"
+  ansible.builtin.file:
+    dest: "{{ postgres.log.directory }}"
+    state: "directory"
+    owner: "postgres"
+    group: "postgres"
+
+- name: "postgresql | check if PG_VERSION exists"
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/PG_VERSION"
+  register: pgversion
+
+- name: "postgresql | check if postgresql.auto.conf exists"
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/postgresql.auto.conf"
+  register: pgauto
+
+- name: "postgresql | check if postgresql.auto.conf exists"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/postgresql@{{ postgres.unit_target }}.service.d"
+  register: pgunit
+
+- name: "postgresql | geneate postgresql unit systemd"
+  ansible.builtin.command:
+    argv:
+      - "/usr/sbin/postgresql-new-systemd-unit"
+      - "--unit=postgresql@{{ postgres.unit_target }}.service"
+      - "--datadir={{ postgres.data_directory }}"
+  register: genunit
+  when: "not pgversion.stat.exists and not pgauto.stat.exists and not pgunit.stat.exists"
+
+- name: "postgresql | ensure services"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+  when: "genunit is defined and (genunit.skipped or genunit.rc == 0)"
+  with_items:
+    - "postgresql@{{ postgres.unit_target }}"
+
+- name: "postgresql | initialize database"
+  become_user: "postgres"
+  ansible.builtin.command:
+    argv:
+      - "/usr/bin/postgresql-setup"
+      - "--initdb"
+      - "--unit=postgresql@{{ postgres.unit_target }}"
+      - "--port={{ postgres.port }}"
+  when: |
+    postgres.standby_mode != 'on'
+    and not pgversion.stat.exists and not pgauto.stat.exists
+    and (
+      (genunit.rc is defined and genunit.rc == 0)
+      or pgunit.stat.exists
+    )
+
+- name: "postgresql | replicate primary database"
+  become_user: "postgres"
+  ansible.builtin.command:
+    cmd: |
+      /bin/pg_basebackup -h {{ postgres.primary_address }} -U {{ postgres.replication.username }} -D {{ postgres.data_directory }} -w
+  environment:
+    PGPASSWORD: "{{ postgres.replication.password }}"
+  when: |
+    postgres.standby_mode == 'on'
+    and not pgversion.stat.exists and not pgauto.stat.exists
+    and (
+      (genunit.rc is defined and genunit.rc == 0)
+      or pgunit.stat.exists
+    )
+
+- name: "postgresql | ensure PGDATA"
+  ansible.builtin.file:
+    dest: "{{ postgres.data_directory }}"
+    state: "directory"
+    owner: "postgres"
+    group: "postgres"
+    mode: "0750"
+
+- name: "postgresql | check if PG_VERSION exists"
+  when: |
+    postgres.standby_mode == 'on'
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/PG_VERSION"
+  register: pgversion
+
+- name: "postgresql | check if postgresql.auto.conf exists"
+  when: |
+    postgres.standby_mode == 'on'
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/postgresql.auto.conf"
+  register: pgauto
+
+- name: "postgresql | template main config"
+  ansible.builtin.template:
+    src: "postgresql.conf.j2"
+    dest: "{{ postgres.data_directory }}/postgresql.conf"
+    mode: '0644'
+    owner: "postgres"
+    group: "postgres"
+  notify:
+    - "restart postgresql"
+
+- name: "postgresql | template hba config"
+  ansible.builtin.template:
+    src: "pg_hba.conf.j2"
+    dest: "{{ postgres.data_directory }}/pg_hba.conf"
+    mode: '0644'
+    owner: "postgres"
+    group: "postgres"
+  notify:
+    - "restart postgresql"
+
+- name: "postgresql | setup replication user"
+  when: "postgres.standby_mode != 'on'"
+  become_user: "postgres"
+  community.postgresql.postgresql_user:
+    name: "{{ postgres.replication.username }}"
+    password: "{{ postgres.replication.password }}"
+    role_attr_flags: "REPLICATION"
+
+- name: "postgresql | clean up standby config"
+  when: "postgres.standby_mode != 'on'"
+  ansible.builtin.file:
+    dest: "{{ item }}"
+    mode: '0644'
+    owner: "postgres"
+    group: "postgres"
+    state: "absent"
+  with_items:
+    - "{{ postgres.data_directory }}/recovery.conf"
+    - "{{ postgres.data_directory }}/standby.signal"
+  notify:
+    - "restart postgresql"
+
+- name: "postgresql | check standby signal"
+  when: "postgres.standby_mode == 'on'"
+  ansible.builtin.stat:
+    dest: "{{ postgres.data_directory }}/standby.signal"
+  register: standbysignal
+
+- name: "postgresql | set standby signal"
+  when: "postgres.standby_mode == 'on' and not standbysignal.stat.exists"
+  ansible.builtin.file:
+    dest: "{{ postgres.data_directory }}/standby.signal"
+    mode: '0644'
+    owner: "postgres"
+    group: "postgres"
+    state: "touch"
+  notify:
+    - "restart postgresql"
+
+- name: "ensure services started"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "postgresql@{{ postgres.unit_target }}"
+    - "pgbouncer"
+    - "keepalived"

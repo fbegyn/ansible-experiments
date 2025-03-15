@@ -1,0 +1,2 @@
+primary_conninfo = "host={{ postgres.primary_address }} port={{ postgres.port }} user={{ postgres.replication.username }} password={{ postgres.replication.password }} application_name={{ postgres.replication.application_name }}"
+recover_target_timeline = {{ postgres.recovery_target_timeline }}

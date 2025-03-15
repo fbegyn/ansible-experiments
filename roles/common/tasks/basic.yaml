@@ -1,4 +1,8 @@
 ---
+- name: "yum | update"
+  ansible.builtin.yum:
+    update_cache: true
+
 - name: "install basic packages"
   ansible.builtin.package:
     name: "{{ item }}"
@@ -10,6 +14,8 @@
     - "coreutils"
     - "less"
     - "vim"
+    - "man"
+    - "epel-release"
   notify:
     - "enable sshd"
     - "enable firewalld"
@@ -43,6 +49,12 @@
     permanent: true
     immediate: true
     state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
   notify:
     - "reload firewalld"
 

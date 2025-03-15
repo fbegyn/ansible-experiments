@@ -1,30 +1,39 @@
 ---
 # postgresql
-- name: "enable postgresql"
-  ansible.builtin.service:
-    name: "postgresql"
-    state: "enabled"
 - name: "start postgresql"
   ansible.builtin.service:
-    name: "postgresql"
+    name: "postgresql@{{ postgres.unit_target }}"
     state: "started"
 - name: "stop postgresql"
   ansible.builtin.service:
-    name: "postgresql"
+    name: "postgresql@{{ postgres.unit_target }}"
     state: "stopped"
 - name: "restart postgresql"
   ansible.builtin.service:
-    name: "postgresql"
+    name: "postgresql@{{ postgres.unit_target }}"
     state: "restarted"
 - name: "reload postgresql"
   ansible.builtin.service:
-    name: "postgresql"
+    name: "postgresql@{{ postgres.unit_target }}"
+    state: "reloaded"
+# pgbouncer
+- name: "start pgbouncer"
+  ansible.builtin.service:
+    name: "pgbouncer"
+    state: "started"
+- name: "stop pgbouncer"
+  ansible.builtin.service:
+    name: "pgbouncer"
+    state: "stopped"
+- name: "restart pgbouncer"
+  ansible.builtin.service:
+    name: "pgbouncer"
+    state: "restarted"
+- name: "reload pgbouncer"
+  ansible.builtin.service:
+    name: "pgbouncer"
     state: "reloaded"
 # firewalld
-- name: "enable firewalld"
-  ansible.builtin.service:
-    name: "firewalld"
-    state: "enabled"
 - name: "start firewalld"
   ansible.builtin.service:
     name: "firewalld"
@@ -42,10 +51,6 @@
     name: "firewalld"
     state: "reloaded"
 # keepalived
-- name: "enable keepalived"
-  ansible.builtin.service:
-    name: "keepalived"
-    state: "enabled"
 - name: "start keepalived"
   ansible.builtin.service:
     name: "keepalived"

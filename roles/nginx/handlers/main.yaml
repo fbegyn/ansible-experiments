@@ -1,9 +1,5 @@
 ---
 # nginx
-- name: "enable nginx"
-  ansible.builtin.service:
-    name: "nginx"
-    state: "enabled"
 - name: "start nginx"
   ansible.builtin.service:
     name: "nginx"
@@ -21,10 +17,6 @@
     name: "nginx"
     state: "reloaded"
 # firewalld
-- name: "enable firewalld"
-  ansible.builtin.service:
-    name: "firewalld"
-    state: "enabled"
 - name: "start firewalld"
   ansible.builtin.service:
     name: "firewalld"
@@ -42,10 +34,6 @@
     name: "firewalld"
     state: "reloaded"
 # keepalived
-- name: "enable keepalived"
-  ansible.builtin.service:
-    name: "keepalived"
-    state: "enabled"
 - name: "start keepalived"
   ansible.builtin.service:
     name: "keepalived"

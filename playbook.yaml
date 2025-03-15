@@ -21,3 +21,5 @@
   roles:
     - role: "postgres"
       tags: ["postgres", "backend"]
+      environment:
+        PGDATA: "{{ postgres.data_directory }}"
