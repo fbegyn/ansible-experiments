@@ -6,6 +6,9 @@
   with_items:
     - "nginx"
     - "keepalived"
+  notify:
+    - "enable nginx"
+    - "enable keepalived"
 
 - name: "nginx | allow http on firewalld"
   ansible.posix.firewalld:
@@ -24,3 +27,32 @@
     state: "enabled"
   notify:
     - "reload firewalld"
+
+- name: "keepalived | ensure script path"
+  ansible.builtin.file:
+    dest: "/usr/libexec/keepalived/scripts"
+    state: "directory"
+
+- name: "keepalived | deploy nginx health check"
+  ansible.builtin.copy:
+    src: "check_nginx.sh"
+    dest: "/usr/libexec/keepalived/scripts/check_nginx.sh"
+    mode: '0755'
+    notify:
+      - "reload keepalived"
+
+- name: "keepalived | template config"
+  ansible.builtin.template:
+    src: "keepalived.conf.j2"
+    dest: "/etc/keepalived/keepalived.conf"
+    mode: '0755'
+    notify:
+      - "reload keepalived"
+
+- name: "ensure services started"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "nginx"
+    - "keepalived"

@@ -1,7 +1,6 @@
 ---
 - name: "run common role against all"
   hosts: all
-  remote_user: "root"
   become: true
   roles:
     - role: "common"

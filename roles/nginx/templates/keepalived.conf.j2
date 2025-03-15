@@ -1,0 +1,22 @@
+# this file is managed by ansible, resistance is futile
+
+vrrp_instance VI_1 {
+    state {{ keepalived_state }}               # MASTER or BACKUP
+    interface {{ keepalived_interface }}        # Network interface (e.g., eth0)
+    virtual_router_id {{ keepalived_virtual_router_id }}  # Unique VRRP ID
+    priority {{ keepalived_priority }}          # Priority value (higher for MASTER)
+    advert_int {{ keepalived_advert_int }}      # Advertisement interval (default: 1 second)
+
+    authentication {
+        auth_type PASS                         # Authentication type (static pass)
+        auth_pass {{ keepalived_auth_pass }}    # Password for authentication
+    }
+
+    virtual_ipaddress {
+        {{ keepalived_virtual_ip }}            # Virtual IP (VIP)
+    }
+
+    track_script {
+        chk_nginx                              # Script to monitor NGINX status
+    }
+}
