@@ -1,0 +1,6 @@
+---
+keepalived:
+  state: "BACKUP"
+
+postgres:
+  standby_mode: "on"

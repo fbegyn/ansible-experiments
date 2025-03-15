@@ -1,0 +1,138 @@
+---
+- name: "install packages on the hosts"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - "postgresql-server"
+    - "postgresql-contrib"
+    - "pgbouncer"
+    - "keepalived"
+
+- name: "ensure services enabled"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+  with_items:
+    - "pgbouncer"
+    - "keepalived"
+
+- name: "postgresql | allow postgresql on firewalld"
+  ansible.posix.firewalld:
+    port: "{{ postgres.port }}/tcp"
+    permanent: true
+    immediate: true
+    state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
+  notify:
+    - "reload firewalld"
+
+- name: "pgbouncer | allow pgbouncer on firewalld"
+  ansible.posix.firewalld:
+    port: "{{ pgbouncer.port }}/tcp"
+    permanent: true
+    immediate: true
+    state: "enabled"
+    zone: "{{ item }}"
+  with_items:
+    - "public"
+    - "internal"
+    - "trusted"
+    - "home"
+  notify:
+    - "reload firewalld"
+
+- name: "keepalived | create keepalived_script group"
+  ansible.builtin.group:
+    name: "keepalived_script"
+    state: "present"
+
+- name: "keepalived | create keepalived_script user"
+  ansible.builtin.user:
+    name: "keepalived_script"
+    groups: "keepalived_script"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+
+- name: "keepalived | ensure script path"
+  ansible.builtin.file:
+    dest: "/usr/libexec/keepalived/scripts"
+    state: "directory"
+
+- name: "keepalived | template config"
+  ansible.builtin.template:
+    src: "keepalived.conf.j2"
+    dest: "/etc/keepalived/keepalived.conf"
+    mode: '0644'
+  notify:
+    - "reload keepalived"
+
+- name: "postgresql | create postgres group"
+  ansible.builtin.group:
+    name: "postgres"
+    state: "present"
+
+- name: "postgresql | create postgresql user"
+  ansible.builtin.user:
+    name: "postgres"
+    groups: "postgres"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+
+- name: "postgresql | ensure PGDATA"
+  ansible.builtin.file:
+    dest: "{{ postgres.data_directory }}"
+    state: "directory"
+    owner: "postgres"
+    group: "postgres"
+    mode: "0750"
+
+- name: "postgresql | ensure log path"
+  ansible.builtin.file:
+    dest: "{{ postgres.log.directory }}"
+    state: "directory"
+    owner: "postgres"
+    group: "postgres"
+
+- name: "postgresql | check if PG_VERSION exists"
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/PG_VERSION"
+  register: pgversion
+
+- name: "postgresql | check if postgresql.auto.conf exists"
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/postgresql.auto.conf"
+  register: pgauto
+
+- name: "postgresql | check if postgres@{{ postgres.unit_target }} exists"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/postgresql@{{ postgres.unit_target }}.service.d"
+  register: pgunit
+
+- name: "postgresql | geneate postgresql unit systemd"
+  ansible.builtin.command:
+    argv:
+      - "/usr/sbin/postgresql-new-systemd-unit"
+      - "--unit=postgresql@{{ postgres.unit_target }}.service"
+      - "--datadir={{ postgres.data_directory }}"
+  register: genunit
+  when: "not pgversion.stat.exists and not pgauto.stat.exists and not pgunit.stat.exists"
+
+- name: "postgresql | ensure services"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    enabled: true
+  when: "genunit is defined and (genunit.skipped or genunit.rc == 0)"
+  with_items:
+    - "postgresql@{{ postgres.unit_target }}"
