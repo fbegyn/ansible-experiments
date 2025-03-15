@@ -1,0 +1,5 @@
+---
+- name: "postgresql | setup databases"
+  community.postgresql.postgresql_db:
+    name: "{{ item.name }}"
+  with_items: "{{ postgres.databases }}"

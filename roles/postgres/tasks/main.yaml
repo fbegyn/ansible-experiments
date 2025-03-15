@@ -10,8 +10,23 @@
   ansible.builtin.import_tasks:
     file: "primary.yaml"
 
+- name: "database setup"
+  when: "inventory_hostname in groups['db-primary']"
+  become_user: "postgres"
+  tags: ["primary", "setup"]
+  ansible.builtin.import_tasks:
+    file: "database.yaml"
+
+- name: "user setup"
+  when: "inventory_hostname in groups['db-primary']"
+  become_user: "postgres"
+  tags: ["primary", "setup"]
+  ansible.builtin.import_tasks:
+    file: "users.yaml"
+
 - name: "replica setup"
   when: "inventory_hostname in groups['db-replica']"
   tags: ["replica"]
   ansible.builtin.import_tasks:
     file: "replica.yaml"
+

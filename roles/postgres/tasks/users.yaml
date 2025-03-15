@@ -1,0 +1,8 @@
+---
+- name: "postgresql | setup users"
+  community.postgresql.postgresql_user:
+    name: "{{ item.name }}"
+    password: "{{ item.password }}"
+    db: "{{ item.database }}"
+  with_items:
+    - "{{ postgres.users }}"
