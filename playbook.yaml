@@ -1,0 +1,24 @@
+---
+- name: "run common role against all"
+  hosts: all
+  remote_user: "root"
+  become: true
+  roles:
+    - role: "common"
+      tags: ["common", "base"]
+
+- name: "setup frontend hosts"
+  hosts: frontend
+  become: true
+  tags: ["frontend", "application"]
+  roles:
+    - role: "nginx"
+      tags: ["nginx", "frontend"]
+
+- name: "setup backend hosts"
+  hosts: backend
+  become: true
+  tags: ["backend", "application"]
+  roles:
+    - role: "postgres"
+      tags: ["postgres", "backend"]

@@ -1,0 +1,64 @@
+---
+# postgresql
+- name: "enable postgresql"
+  ansible.builtin.service:
+    name: "postgresql"
+    state: "enabled"
+- name: "start postgresql"
+  ansible.builtin.service:
+    name: "postgresql"
+    state: "started"
+- name: "stop postgresql"
+  ansible.builtin.service:
+    name: "postgresql"
+    state: "stopped"
+- name: "restart postgresql"
+  ansible.builtin.service:
+    name: "postgresql"
+    state: "restarted"
+- name: "reload postgresql"
+  ansible.builtin.service:
+    name: "postgresql"
+    state: "reloaded"
+# firewalld
+- name: "enable firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "enabled"
+- name: "start firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+- name: "stop firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "stopped"
+- name: "restart firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "restarted"
+- name: "reload firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "reloaded"
+# keepalived
+- name: "enable keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "enabled"
+- name: "start keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "started"
+- name: "stop keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "stopped"
+- name: "restart keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "restarted"
+- name: "reload keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "reloaded"

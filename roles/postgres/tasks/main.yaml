@@ -1,0 +1,19 @@
+---
+- name: "install packages on the hosts"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - "postgresql-server"
+    - "keepalived"
+  notify:
+    - "start postgresql"
+
+- name: "postgresql | allow postgresql on firewalld"
+  ansible.posix.firewalld:
+    service: "postgresql"
+    permanent: true
+    immediate: true
+    state: "enabled"
+  notify:
+    - "reload firewalld"

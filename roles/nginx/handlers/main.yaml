@@ -1,0 +1,64 @@
+---
+# nginx
+- name: "enable nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "enabled"
+- name: "start nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "started"
+- name: "stop nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "stopped"
+- name: "restart nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "restarted"
+- name: "reload nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "reloaded"
+# firewalld
+- name: "enable firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "enabled"
+- name: "start firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+- name: "stop firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "stopped"
+- name: "restart firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "restarted"
+- name: "reload firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "reloaded"
+# keepalived
+- name: "enable keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "enabled"
+- name: "start keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "started"
+- name: "stop keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "stopped"
+- name: "restart keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "restarted"
+- name: "reload keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    state: "reloaded"

@@ -1,0 +1,15 @@
+---
+- name: "python3 check and setup"
+  tags: ["python"]
+  ansible.builtin.import_tasks:
+    file: "python.yaml"
+
+- name: "basic setup"
+  tags: ["basic"]
+  ansible.builtin.import_tasks:
+    file: "basic.yaml"
+
+- name: "user setup"
+  tags: ["users"]
+  ansible.builtin.import_tasks:
+    file: "user.yaml"

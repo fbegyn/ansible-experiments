@@ -1,0 +1,7 @@
+[frontend]
+front-01 ansible_host=10.5.30.51
+front-02 ansible_host=10.5.30.52
+
+[backend]
+back-01 ansible_host=10.5.30.53
+back-02 ansible_host=10.5.30.54

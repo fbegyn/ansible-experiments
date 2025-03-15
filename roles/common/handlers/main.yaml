@@ -1,0 +1,43 @@
+---
+# sshd
+- name: "enable sshd"
+  ansible.builtin.service:
+    name: "sshd"
+    state: "enabled"
+- name: "start sshd"
+  ansible.builtin.service:
+    name: "sshd"
+    state: "started"
+- name: "stop sshd"
+  ansible.builtin.service:
+    name: "sshd"
+    state: "stopped"
+- name: "restart sshd"
+  ansible.builtin.service:
+    name: "sshd"
+    state: "restarted"
+- name: "reload sshd"
+  ansible.builtin.service:
+    name: "sshd"
+    state: "reloaded"
+# firewalld
+- name: "enable firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "enabled"
+- name: "start firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+- name: "stop firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "stopped"
+- name: "restart firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "restarted"
+- name: "reload firewalld"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "reloaded"

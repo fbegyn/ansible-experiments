@@ -1,0 +1,26 @@
+---
+- name: "install packages on the hosts"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - "nginx"
+    - "keepalived"
+
+- name: "nginx | allow http on firewalld"
+  ansible.posix.firewalld:
+    service: "http"
+    permanent: true
+    immediate: true
+    state: "enabled"
+  notify:
+    - "reload firewalld"
+
+- name: "nginx | allow https on firewalld"
+  ansible.posix.firewalld:
+    service: "http"
+    permanent: true
+    immediate: true
+    state: "enabled"
+  notify:
+    - "reload firewalld"

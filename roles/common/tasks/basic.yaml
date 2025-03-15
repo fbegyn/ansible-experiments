@@ -1,0 +1,55 @@
+---
+- name: "install basic packages"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - "openssh-server"
+    - "python3"
+    - "firewalld"
+    - "coreutils"
+    - "less"
+    - "vim"
+  notify:
+    - "enable sshd"
+    - "enable firewalld"
+
+- name: "sshd | render banner"
+  ansible.builtin.template:
+    src: "sshd_banner.j2"
+    dest: "/etc/ssh/banner"
+    owner: "root"
+    mode: "0644"
+  notify:
+    - "reload sshd"
+
+- name: "sshd | render config template"
+  ansible.builtin.template:
+    src: "sshd_config.j2"
+    dest: "/etc/ssh/sshd_config"
+    owner: "root"
+    mode: "0644"
+  notify:
+    - "reload sshd"
+
+- name: "firewalld | start service"
+  ansible.builtin.service:
+    name: "firewalld"
+    state: "started"
+
+- name: "firewalld | allow ssh access"
+  ansible.posix.firewalld:
+    service: "ssh"
+    permanent: true
+    immediate: true
+    state: "enabled"
+  notify:
+    - "reload firewalld"
+
+- name: "ensure the installed services are running"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "sshd"
+    - "firewalld"
