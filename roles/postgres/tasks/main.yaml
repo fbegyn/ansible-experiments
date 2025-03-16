@@ -31,9 +31,9 @@
     file: "replica.yaml"
 
 # this needs some schema loaded which is out of scope here
-# - name: "data setup"
-#   when: "inventory_hostname in groups['db-primary']"
-#   become_user: "postgres"
-#   tags: ["setup","data"]
-#   ansible.builtin.import_tasks:
-#     file: "data.yaml"
+- name: "data setup"
+  when: "inventory_hostname in groups['db-primary']"
+  become_user: "postgres"
+  tags: ["setup","data"]
+  ansible.builtin.import_tasks:
+    file: "data.yaml"

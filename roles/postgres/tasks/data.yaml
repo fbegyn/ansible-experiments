@@ -1,10 +1,13 @@
 ---
+# TODO: need to check how to make this idempotent, but out of scope for the
+# moment, data may be loaded duplicate for now. A fix for this would be
+# validating the table exists and only loading after that is not the case.
 - name: "postgresql | check port"
   ansible.builtin.wait_for:
     port: "{{ postgres.port }}"
     delay: 2
 
-- name: "postgresql | setup data"
+- name: "postgresql | copy file to host"
   ansible.builtin.copy:
     src: "{{ item.source }}"
     dest: "/tmp/{{ item.source }}"
@@ -12,11 +15,22 @@
   with_items:
     - "{{ postgres.data }}"
 
-- name: "postgresql | setup data"
+- name: "postgresql | setup table for data"
+  community.postgresql.postgresql_table:
+    name: "{{ item.table }}"
+    db: "{{ item.database }}"
+    columns: "{{ item.columns }}"
+  with_items:
+    - "{{ postgres.data }}"
+
+- name: "postgresql | import data"
   community.postgresql.postgresql_copy:
     copy_from: "/tmp/{{ item.source }}"
     db: "{{ item.database }}"
     dst: "{{ item.table }}"
-    columns: "{{ item.columns }}"
+    # TODO: how to make this generic for data imports or just another YAML key
+    columns: "data,uitstekend,goed,aanvaardbaar,slecht"
+    options:
+      format: "csv"
   with_items:
     - "{{ postgres.data }}"

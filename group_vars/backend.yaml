@@ -17,7 +17,13 @@ postgres:
     - source: "test.csv"
       database: "core"
       table: "zwemwater"
-      columns: "data,uitstekend,goed,aanvaardbaar,slecht"
+      columns:
+        - "id bigserial primary key"
+        - "data int"
+        - "uitstekend float"
+        - "goed float"
+        - "aanvaardbaar float"
+        - "slecht float"
   databases:
     - name: "testing"
     - name: "hello"
