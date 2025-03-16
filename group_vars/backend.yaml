@@ -13,6 +13,11 @@ postgres:
   replication:
     username: "replication"
     password: "replication"
+  data:
+    - source: "test.csv"
+      database: "core"
+      table: "zwemwater"
+      columns: "data,uitstekend,goed,aanvaardbaar,slecht"
   databases:
     - name: "testing"
     - name: "hello"

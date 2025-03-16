@@ -1,0 +1,22 @@
+---
+- name: "postgresql | check port"
+  ansible.builtin.wait_for:
+    port: "{{ postgres.port }}"
+    delay: 2
+
+- name: "postgresql | setup data"
+  ansible.builtin.copy:
+    src: "{{ item.source }}"
+    dest: "/tmp/{{ item.source }}"
+    mode: '0755'
+  with_items:
+    - "{{ postgres.data }}"
+
+- name: "postgresql | setup data"
+  community.postgresql.postgresql_copy:
+    copy_from: "/tmp/{{ item.source }}"
+    db: "{{ item.database }}"
+    dst: "{{ item.table }}"
+    columns: "{{ item.columns }}"
+  with_items:
+    - "{{ postgres.data }}"

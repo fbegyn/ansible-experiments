@@ -51,6 +51,8 @@
   ansible.builtin.group:
     name: "keepalived_script"
     state: "present"
+  notify:
+    - "reload keepalived"
 
 - name: "keepalived | create keepalived_script user"
   ansible.builtin.user:
@@ -61,6 +63,8 @@
     password: "!"
     create_home: false
     system: true
+  notify:
+    - "reload keepalived"
 
 - name: "keepalived | ensure script path"
   ansible.builtin.file:
@@ -133,6 +137,10 @@
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: true
-  when: "genunit is defined and (genunit.skipped or genunit.rc == 0)"
+  when: |
+    genunit is defined and (
+      (genunit.skipped is defined and genunit.skipped)
+      or genunit.rc == 0
+    )
   with_items:
     - "postgresql@{{ postgres.unit_target }}"

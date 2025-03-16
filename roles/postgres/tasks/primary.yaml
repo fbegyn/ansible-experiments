@@ -1,4 +1,19 @@
 ---
+- name: "postgresql | check if PG_VERSION exists"
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/PG_VERSION"
+  register: pgversion
+
+- name: "postgresql | check if postgresql.auto.conf exists"
+  ansible.builtin.stat:
+    path: "{{ postgres.data_directory }}/postgresql.auto.conf"
+  register: pgauto
+
+- name: "postgresql | check if postgres@{{ postgres.unit_target }} exists"
+  ansible.builtin.stat:
+    path: "/etc/systemd/system/postgresql@{{ postgres.unit_target }}.service.d"
+  register: pgunit
+
 - name: "postgresql | initialize database"
   become_user: "postgres"
   ansible.builtin.command:
@@ -13,6 +28,16 @@
       (genunit.rc is defined and genunit.rc == 0)
       or pgunit.stat.exists
     )
+  notify:
+    - "restart postgresql"
+
+- name: "postgresql | ensure PGDATA"
+  ansible.builtin.file:
+    dest: "{{ postgres.data_directory }}"
+    state: "directory"
+    owner: "postgres"
+    group: "postgres"
+    mode: "0750"
 
 - name: "postgresql | template main config"
   ansible.builtin.template:
@@ -34,6 +59,14 @@
   notify:
     - "restart postgresql"
 
+- name: "flushing handlers"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "postgresql | wait for startup"
+  ansible.builtin.wait_for:
+    port: "{{ postgres.port }}"
+    delay: 2
+
 - name: "postgresql | setup replication user"
   become_user: "postgres"
   community.postgresql.postgresql_user:
@@ -54,10 +87,13 @@
   notify:
     - "restart postgresql"
 
-- name: "postgresql | check standby signal"
-  ansible.builtin.stat:
-    dest: "{{ postgres.data_directory }}/standby.signal"
-  register: standbysignal
+- name: "flushing handlers"
+  ansible.builtin.meta: "flush_handlers"
+
+- name: "postgresql | wait for startup"
+  ansible.builtin.wait_for:
+    port: "{{ postgres.port }}"
+    delay: 2
 
 - name: "ensure services started"
   ansible.builtin.service:
