@@ -6,11 +6,13 @@ keepalived:
   auth_pass: "foo123bar"
 
 postgres:
+  version: "17"
   primary_address: "127.0.0.1"
   listen_addresses: "127.0.0.1"
   port: 5432
   unit_target: "default"
-  data_directory: "/var/lib/pgsql/data"
+  data_directory: "/var/lib/pgsql/17/data"
+  bin_directory: "/usr/pgsql-17/bin/"
   max_connections: 5
   wal:
     level: "replica"
@@ -35,6 +37,25 @@ postgres:
     application_name: "foobar"
     username: "hello"
     password: "world"
+  password_encryption: "scram-sha-256"
+
+patroni:
+  cluster_name: "foobar"
+  port: 8008
+  log:
+    level: "INFO"
 
 pgbouncer:
   port: 6432
+
+consul:
+  port: 8500
+  host: "127.0.0.1"
+  datacenter: "foo"
+  data_dir: "/opt/consul"
+  ui:
+    enabled: "true"
+  client_addr: "127.0.0.1"
+  bind_addr: "127.0.0.1"
+  retry_join: ["127.0.0.1"]
+  log_level: "INFO"

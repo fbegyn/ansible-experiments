@@ -4,6 +4,11 @@ keepalived:
   auth_pass: "hello12345world"
   virtual_ip: "10.5.30.61"
 
+consul:
+  retry_join: ["10.5.30.55"]
+  bind_addr: "0.0.0.0"
+  client_addr: "0.0.0.0"
+
 postgres:
   primary_address: "10.5.30.53"
   data_directory: "/var/lib/postgres/data"

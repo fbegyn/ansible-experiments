@@ -1,0 +1,31 @@
+- name: "keepalived | create keepalived_script group"
+  ansible.builtin.group:
+    name: "keepalived_script"
+    state: "present"
+  notify:
+    - "reload keepalived"
+
+- name: "keepalived | create keepalived_script user"
+  ansible.builtin.user:
+    name: "keepalived_script"
+    groups: "keepalived_script"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+  notify:
+    - "reload keepalived"
+
+- name: "keepalived | ensure script path"
+  ansible.builtin.file:
+    dest: "/usr/libexec/keepalived/scripts"
+    state: "directory"
+
+- name: "keepalived | template config"
+  ansible.builtin.template:
+    src: "keepalived.conf.j2"
+    dest: "/etc/keepalived/keepalived.conf"
+    mode: '0644'
+  notify:
+    - "reload keepalived"

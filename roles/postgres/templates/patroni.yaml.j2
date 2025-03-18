@@ -1,0 +1,68 @@
+scope: '{{ patroni.cluster_name }}'
+name: {{ ansible_hostname }}
+
+log:
+  format: '%(asctime)s %(levelname)s: %(message)s'
+  level: {{ patroni.log.level }}
+  max_queue_size: 1000
+  traceback_level: ERROR
+  type: plain
+
+restapi:
+  connect_address: {{ ansible_host }}:{{ patroni.port}}
+  listen: {{ ansible_host }}:{{ patroni.port}}
+
+bootstrap:
+  dcs:
+    loop_wait: 10
+    retry_timeout: 10
+    ttl: 30
+    postgresql:
+      parameters:
+        hot_standby: 'on'
+        max_connections: 100
+        max_locks_per_transaction: 64
+        max_prepared_transactions: 0
+        max_replication_slots: 10
+        max_wal_senders: 10
+        max_worker_processes: 8
+        track_commit_timestamp: 'off'
+        wal_keep_size: 128MB
+        wal_level: replica
+        wal_log_hints: 'on'
+      use_pg_rewind: true
+      use_slots: true
+
+postgresql:
+  authentication:
+    replication:
+      password: '{{ postgres.replication.username }}'
+      username: '{{ postgres.replication.password }}'
+    rewind:
+      password: '{{ postgres.replication.username }}'
+      username: '{{ postgres.replication.password }}'
+    superuser:
+      password: '{{ postgres.replication.username }}'
+      username: '{{ postgres.replication.password }}'
+  bin_dir: '{{ postgres.bin_directory }}'
+  connect_address: {{ ansible_host }}:{{ postgres.port }}
+  data_dir: '{{ postgres.data_directory }}'
+  listen: {{ ansible_host }}:{{ postgres.port }}
+  parameters:
+    password_encryption: {{ postgres.password_encryption }}
+  pg_hba:
+  - local all         all peer                               {{ postgres.password_encryption }}
+  - host  replication all {{ postgres.replication_network }} {{ postgres.password_encryption }}
+  - host  all         all {{ postgres.trusted_network }}     {{ postgres.password_encryption }}
+
+tags:
+  clonefrom: true
+  failover_priority: 1
+  noloadbalance: false
+  nostream: false
+  nosync: false
+
+consul:
+  host: {{ consul.host }}
+  port: {{ consul.port }}
+  dc: {{ consul.datacenter }}

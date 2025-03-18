@@ -1,0 +1,15 @@
+datacenter = "{{ consul.datacenter }}"
+
+data_dir = "{{ consul.data_dir }}"
+
+client_addr = "{{ consul.client_addr }}"
+
+ui_config{
+  enabled = {{ consul.ui.enabled }}
+}
+
+log_level = "{{ consul.log_level }}"
+
+bind_addr = "{{ consul.bind_addr }}"
+
+retry_join = ["{{ consul.retry_join | join('", "')  }}"]

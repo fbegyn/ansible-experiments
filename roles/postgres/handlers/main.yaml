@@ -1,20 +1,20 @@
 ---
-# postgresql
+# postgresql@{{ ansible.unit_target }}
 - name: "start postgresql"
   ansible.builtin.service:
-    name: "postgresql@{{ postgres.unit_target }}"
+    name: "postgresql-{{ postgres.version }}"
     state: "started"
 - name: "stop postgresql"
   ansible.builtin.service:
-    name: "postgresql@{{ postgres.unit_target }}"
+    name: "postgresql-{{ postgres.version }}"
     state: "stopped"
 - name: "restart postgresql"
   ansible.builtin.service:
-    name: "postgresql@{{ postgres.unit_target }}"
+    name: "postgresql-{{ postgres.version }}"
     state: "restarted"
 - name: "reload postgresql"
   ansible.builtin.service:
-    name: "postgresql@{{ postgres.unit_target }}"
+    name: "postgresql-{{ postgres.version }}"
     state: "reloaded"
 # pgbouncer
 - name: "start pgbouncer"
@@ -66,4 +66,38 @@
 - name: "reload keepalived"
   ansible.builtin.service:
     name: "keepalived"
+    state: "reloaded"
+# patroni
+- name: "start patroni"
+  ansible.builtin.service:
+    name: "patroni"
+    state: "started"
+- name: "stop patroni"
+  ansible.builtin.service:
+    name: "patroni"
+    state: "stopped"
+- name: "restart patroni"
+  ansible.builtin.service:
+    name: "patroni"
+    state: "restarted"
+- name: "reload patroni"
+  ansible.builtin.service:
+    name: "patroni"
+    state: "reloaded"
+# consul
+- name: "start consul"
+  ansible.builtin.service:
+    name: "consul"
+    state: "started"
+- name: "stop consul"
+  ansible.builtin.service:
+    name: "consul"
+    state: "stopped"
+- name: "restart consul"
+  ansible.builtin.service:
+    name: "consul"
+    state: "restarted"
+- name: "reload consul"
+  ansible.builtin.service:
+    name: "consul"
     state: "reloaded"

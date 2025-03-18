@@ -3,7 +3,7 @@
 - name: "enable sshd"
   ansible.builtin.service:
     name: "sshd"
-    state: "enabled"
+    enabled: true
 - name: "start sshd"
   ansible.builtin.service:
     name: "sshd"
@@ -24,7 +24,7 @@
 - name: "enable firewalld"
   ansible.builtin.service:
     name: "firewalld"
-    state: "enabled"
+    enabled: true
 - name: "start firewalld"
   ansible.builtin.service:
     name: "firewalld"

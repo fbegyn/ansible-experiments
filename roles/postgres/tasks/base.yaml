@@ -1,40 +1,62 @@
 ---
+- name: "add postgresql gpg key"
+  ansible.builtin.rpm_key:
+    key: "https://download.postgresql.org/pub/repos/yum/keys/PGDG-RPM-GPG-KEY-RHEL"
+    state: "present"
+
+- name: "add consul gpg key"
+  ansible.builtin.rpm_key:
+    key: "https://rpm.releases.hashicorp.com/gpg"
+    state: "present"
+
+- name: "provide consul through hashicorp repo"
+  ansible.builtin.yum_repository:
+    name: "hasicorp"
+    description: "Hashicorp RPM repo"
+    baseurl: "https://rpm.releases.hashicorp.com/RHEL/$releasever/$basearch/stable"
+    state: "present"
+    enabled: true
+    gpgcheck: true
+
+- name: "add postgresql repository through pacakge"
+  ansible.builtin.package:
+    name: "https://download.postgresql.org/pub/repos/yum/reporpms/EL-9-x86_64/pgdg-redhat-repo-latest.noarch.rpm"
+    state: "present"
+
+- name: "disable built-in postgresql module"
+  ansible.builtin.command: "dnf -qy module disable postgresql"
+
 - name: "install packages on the hosts"
   ansible.builtin.package:
     name: "{{ item }}"
     state: "present"
   with_items:
+    - "postgresql17-server"
+    - "postgresql17-contrib"
+    - "patroni"
+    - "consul"
+    - "patroni-consul"
+    - "keepalived"
+
+- name: "remove packages on the hosts"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "absent"
+  with_items:
     - "postgresql-server"
     - "postgresql-contrib"
     - "pgbouncer"
-    - "keepalived"
 
 - name: "ensure services enabled"
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: true
   with_items:
-    - "pgbouncer"
     - "keepalived"
 
 - name: "postgresql | allow postgresql on firewalld"
   ansible.posix.firewalld:
     port: "{{ postgres.port }}/tcp"
-    permanent: true
-    immediate: true
-    state: "enabled"
-    zone: "{{ item }}"
-  with_items:
-    - "public"
-    - "internal"
-    - "trusted"
-    - "home"
-  notify:
-    - "reload firewalld"
-
-- name: "pgbouncer | allow pgbouncer on firewalld"
-  ansible.posix.firewalld:
-    port: "{{ pgbouncer.port }}/tcp"
     permanent: true
     immediate: true
     state: "enabled"
@@ -94,6 +116,21 @@
     create_home: false
     system: true
 
+- name: "patroni | create patroni group"
+  ansible.builtin.group:
+    name: "patroni"
+    state: "present"
+
+- name: "patroni | create patroniql user"
+  ansible.builtin.user:
+    name: "patroni"
+    groups: "patroni"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+
 - name: "postgresql | ensure PGDATA"
   ansible.builtin.file:
     dest: "{{ postgres.data_directory }}"
@@ -109,38 +146,9 @@
     owner: "postgres"
     group: "postgres"
 
-- name: "postgresql | check if PG_VERSION exists"
-  ansible.builtin.stat:
-    path: "{{ postgres.data_directory }}/PG_VERSION"
-  register: pgversion
-
-- name: "postgresql | check if postgresql.auto.conf exists"
-  ansible.builtin.stat:
-    path: "{{ postgres.data_directory }}/postgresql.auto.conf"
-  register: pgauto
-
-- name: "postgresql | check if postgres@{{ postgres.unit_target }} exists"
-  ansible.builtin.stat:
-    path: "/etc/systemd/system/postgresql@{{ postgres.unit_target }}.service.d"
-  register: pgunit
-
-- name: "postgresql | geneate postgresql unit systemd"
-  ansible.builtin.command:
-    argv:
-      - "/usr/sbin/postgresql-new-systemd-unit"
-      - "--unit=postgresql@{{ postgres.unit_target }}.service"
-      - "--datadir={{ postgres.data_directory }}"
-  register: genunit
-  when: "not pgversion.stat.exists and not pgauto.stat.exists and not pgunit.stat.exists"
-
 - name: "postgresql | ensure services"
   ansible.builtin.service:
     name: "{{ item }}"
     enabled: true
-  when: |
-    genunit is defined and (
-      (genunit.skipped is defined and genunit.skipped)
-      or genunit.rc == 0
-    )
   with_items:
-    - "postgresql@{{ postgres.unit_target }}"
+    - "postgresql-{{ postgres.version }}"
