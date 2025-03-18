@@ -1,0 +1,10 @@
+---
+- name: "install and basics"
+  tags: ["base"]
+  ansible.builtin.import_tasks:
+    file: "base.yaml"
+
+- name: "server setup"
+  tags: ["setup","consul"]
+  ansible.builtin.import_tasks:
+    file: "setup.yaml"

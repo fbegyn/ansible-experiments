@@ -11,3 +11,6 @@ back-01 ansible_host=10.5.30.53
 
 [db-replica]
 back-02 ansible_host=10.5.30.54
+
+[consul]
+consul-01 ansible_host=10.5.30.55

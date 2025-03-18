@@ -1,0 +1,27 @@
+# this file is managed by ansible, resistance is futile
+
+vrrp_track_process track_postgres {
+    process postmaster
+    delay 1
+}
+
+vrrp_instance POSTGRESQL {
+    state {{ keepalived.state }}
+    interface {{ keepalived.interface }}
+    virtual_router_id {{ keepalived.virtual_router_id }}
+    priority {{ keepalived.priority }}
+    advert_int {{ keepalived.advert_int }}
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ keepalived.auth_pass }}
+    }
+
+    virtual_ipaddress {
+        {{ keepalived.virtual_ip }}
+    }
+
+    track_process {
+        track_postgres
+    }
+}

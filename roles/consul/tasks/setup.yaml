@@ -1,0 +1,10 @@
+---
+- name: "consul | render server config"
+  ansible.builtin.template:
+    src: "config.hcl.j2"
+    dest: "/etc/consul.d/config.hcl"
+    owner: "consul"
+    group: "consul"
+    mode: '0644'
+  notify:
+    - "restart consul"

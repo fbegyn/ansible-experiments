@@ -14,6 +14,14 @@
     - role: "nginx"
       tags: ["nginx", "frontend"]
 
+- name: "setup consul"
+  hosts: consul
+  become: true
+  tags: ["consul", "application"]
+  roles:
+    - role: "consul"
+      tags: ["consul", "backend"]
+
 - name: "setup backend hosts"
   hosts: backend
   become: true

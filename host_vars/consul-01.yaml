@@ -1,0 +1,4 @@
+---
+keepalived:
+  state: "MASTER"
+  priority: 200

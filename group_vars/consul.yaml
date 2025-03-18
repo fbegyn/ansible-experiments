@@ -1,0 +1,12 @@
+---
+keepalived:
+  virtual_router_id: 100
+  auth_pass: "hello12345world"
+  virtual_ip: "10.5.30.62"
+
+consul:
+  server: "true"
+  debug: true
+  retry_join: ["127.0.0.1"]
+  bind_addr: "0.0.0.0"
+  client_addr: "0.0.0.0"

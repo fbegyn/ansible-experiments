@@ -1,0 +1,21 @@
+keepalived:
+  virtual_router_id: 100
+  interface: "eth0"
+  advert_int: 4
+  priority: 100
+  auth_pass: "foo123bar"
+
+consul:
+  port: 8500
+  host: "127.0.0.1"
+  datacenter: "foo"
+  data_dir: "/opt/consul"
+  ui:
+    enabled: "true"
+  server: "false"
+  client_addr: "127.0.0.1"
+  bind_addr: "127.0.0.1"
+  retry_join: ["127.0.0.1"]
+  debug: false
+  bootstrap_expect: 1
+  log_level: "INFO"
