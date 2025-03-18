@@ -3,6 +3,8 @@ users:
 - username: "francis"
   ssh_pub_keys:
     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINK7mMVKOmELe+FVvn1oWNRwKiANgTwcnzte3vWK3nMV"
+    - "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBLQRocoQMC4JDWPL7fYYCfhpq5SoUfaCxUeQpgQrZ7c4Q44/YWPMjHkmGM8+7ZehfVHVxSNJ4i/Rre1n0MJcCT8="
+    - "ecdsa-sha2-nistp256 AAAAE2VjZHNhLXNoYTItbmlzdHAyNTYAAAAIbmlzdHAyNTYAAABBBB0WXcYCfnVErwoM1gYZ4ue37Ao0IPTsQWJNVvv96G0bwcPdbj8Csnp0vsE2no9I/PSPIqrw/1GGUHUGCZS8VgY="
   shell: "/bin/bash"
 - username: "deploy"
   ssh_pub_keys:

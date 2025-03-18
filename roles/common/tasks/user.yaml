@@ -26,12 +26,6 @@
     password: "!"
   with_items: "{{ users }}"
 
-- name: debug
-  ansible.builtin.debug:
-    msg: "{{ item }}"
-  with_items:
-    - "{{ users }}"
-
 - name: "add ssh keys of the user"
   ansible.posix.authorized_key:
     user: "{{ item.username }}"
