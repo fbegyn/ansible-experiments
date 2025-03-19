@@ -39,11 +39,17 @@
     state: "directory"
     mode: "0755"
 
-- name: "python | render demo site application"
+- name: "python | stat module init"
+  ansible.builtin.stat:
+    dest: "{{ python.root }}/__init__.py"
+  register: "demoinit"
+
+- name: "python | init module"
   ansible.builtin.file:
     dest: "{{ python.root }}/__init__.py"
     mode: '0644'
     state: "touch"
+  when: "not demoinit.stat.exists"
 
 - name: "python | render demo site application"
   ansible.builtin.template:

@@ -1,7 +1,4 @@
 ---
-# TODO: need to check how to make this idempotent, but out of scope for the
-# moment, data may be loaded duplicate for now. A fix for this would be
-# validating the table exists and only loading after that is not the case.
 - name: "postgresql | check port"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
@@ -17,6 +14,7 @@
 - name: "patroni | check current status"
   ansible.builtin.command: "/usr/sbin/get-node-role.sh"
   register: "patroni_cmd"
+  changed_when: false
 
 - name: "patroni | set patroni fact"
   ansible.builtin.set_fact:
@@ -43,6 +41,17 @@
     - "{{ postgres.data }}"
   when: 'patroni.Role == "Leader"'
 
+- name: "postgresql | check table data"
+  community.postgresql.postgresql_query:
+    # host: "{{ ansible_host }}"
+    db: "{{ item.database }}"
+    login_user: "{{ postgres.username }}"
+    login_password: "{{ postgres.password }}"
+    query: "SELECT * FROM {{ item.table }};"
+  with_items:
+    - "{{ postgres.data }}"
+  register: "dataquery"
+
 - name: "postgresql | import data"
   community.postgresql.postgresql_copy:
     # host: "{{ ansible_host }}"
@@ -57,4 +66,4 @@
     login_password: "{{ postgres.password }}"
   with_items:
     - "{{ postgres.data }}"
-  when: 'patroni.Role == "Leader"'
+  when: 'patroni.Role == "Leader" and dataquery.results[0].rowcount < 1'
