@@ -8,6 +8,20 @@
     port: "{{ postgres.port }}"
     delay: 2
 
+- name: "patroni | check port"
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ patroni.port }}"
+    delay: 2
+
+- name: "patroni | check current status"
+  ansible.builtin.command: "/usr/sbin/get-node-role.sh"
+  register: "patroni_cmd"
+
+- name: "patroni | set patroni fact"
+  ansible.builtin.set_fact:
+    patroni: "{{ patroni_cmd.stdout | from_json }}"
+
 - name: "postgresql | copy file to host"
   ansible.builtin.copy:
     src: "{{ item.source }}"
@@ -15,19 +29,23 @@
     mode: '0755'
   with_items:
     - "{{ postgres.data }}"
+  when: 'patroni.Role == "Leader"'
 
 - name: "postgresql | setup table for data"
   community.postgresql.postgresql_table:
-    host: "{{ ansible_host }}"
+    # host: "{{ ansible_host }}"
     name: "{{ item.table }}"
     db: "{{ item.database }}"
     columns: "{{ item.columns }}"
+    login_user: "{{ postgres.username }}"
+    login_password: "{{ postgres.password }}"
   with_items:
     - "{{ postgres.data }}"
+  when: 'patroni.Role == "Leader"'
 
 - name: "postgresql | import data"
   community.postgresql.postgresql_copy:
-    host: "{{ ansible_host }}"
+    # host: "{{ ansible_host }}"
     copy_from: "/tmp/{{ item.source }}"
     db: "{{ item.database }}"
     dst: "{{ item.table }}"
@@ -35,5 +53,8 @@
     columns: "data,uitstekend,goed,aanvaardbaar,slecht"
     options:
       format: "csv"
+    login_user: "{{ postgres.username }}"
+    login_password: "{{ postgres.password }}"
   with_items:
     - "{{ postgres.data }}"
+  when: 'patroni.Role == "Leader"'

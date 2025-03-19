@@ -5,8 +5,25 @@
     port: "{{ postgres.port }}"
     delay: 2
 
+- name: "patroni | check port"
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ patroni.port }}"
+    delay: 2
+
+- name: "patroni | check current status"
+  ansible.builtin.command: "/usr/sbin/get-node-role.sh"
+  register: "patroni_cmd"
+
+- name: "patroni | set patroni fact"
+  ansible.builtin.set_fact:
+    patroni: "{{ patroni_cmd.stdout | from_json }}"
+
 - name: "postgresql | setup databases"
   community.postgresql.postgresql_db:
-    host: "{{ ansible_host }}"
+    # host: "{{ ansible_host }}"
     name: "{{ item.name }}"
+    login_user: "{{ postgres.username }}"
+    login_password: "{{ postgres.password }}"
   with_items: "{{ postgres.databases }}"
+  when: 'patroni.Role == "Leader"'

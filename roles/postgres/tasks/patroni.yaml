@@ -45,6 +45,22 @@
 #     group: "postgres"
 #     state: "touch"
 
+- name: "patroni | script to get leader  IP"
+  ansible.builtin.copy:
+    dest: "/usr/sbin/get-leader-ip.sh"
+    src: "get-leader-ip.sh"
+    mode: '0755'
+    owner: "postgres"
+    group: "postgres"
+
+- name: "patroni | script to get node role"
+  ansible.builtin.template:
+    src: "get-node-role.sh.j2"
+    dest: "/usr/sbin/get-node-role.sh"
+    mode: '0755'
+    owner: "postgres"
+    group: "postgres"
+
 - name: "patroni | config directory"
   ansible.builtin.file:
     dest: "/etc/patroni"
@@ -62,6 +78,11 @@
     group: "postgres"
   notify:
     - "restart patroni"
+
+- name: "patroni | start service"
+  ansible.builtin.service:
+    name: "patroni"
+    state: "started"
 
 - name: "flushing handlers"
   ansible.builtin.meta: "flush_handlers"

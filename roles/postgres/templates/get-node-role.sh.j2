@@ -1,0 +1,3 @@
+#! /usr/bin/env bash
+
+patronictl -c /etc/patroni/patroni.yml list -f json | jq '.[] | select(.Member | contains("{{ ansible_hostname }}"))'

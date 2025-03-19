@@ -35,19 +35,18 @@
 
 - name: "database setup"
   become_user: "postgres"
-  tags: ["primary", "setup"]
+  tags: ["data", "database"]
   ansible.builtin.import_tasks:
     file: "database.yaml"
 
 - name: "user setup"
   become_user: "postgres"
-  tags: ["primary", "setup"]
+  tags: ["data", "users"]
   ansible.builtin.import_tasks:
     file: "users.yaml"
 
 - name: "data setup"
-  when: "inventory_hostname in groups['db-primary']"
   become_user: "postgres"
-  tags: ["setup", "data"]
+  tags: ["data"]
   ansible.builtin.import_tasks:
     file: "data.yaml"
