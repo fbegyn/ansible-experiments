@@ -80,11 +80,19 @@
     host: "{{ ansible_host }}"
     port: "{{ patroni.port }}"
     delay: 2
-    timeout: 60
+    timeout: 30
 
 - name: "postgresql | wait for startup"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
-    timeout: 60
+    timeout: 30
+
+- name: "postgresql | setup replication user"
+  community.postgresql.postgresql_user:
+    name: "{{ postgres.replication.username }}"
+    password: "{{ postgres.replication.password }}"
+    login_user: "{{ postgres.username }}"
+    login_password: "{{ postgres.password }}"
+    role_attr_flags: "REPLICATION"

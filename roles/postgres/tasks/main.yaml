@@ -20,7 +20,7 @@
     host: "{{ ansible_host }}"
     port: "{{ patroni.port }}"
     delay: 2
-    timeout: 30
+    timeout: 10
   register: "patroni_port"
   ignore_errors: true
   changed_when: false

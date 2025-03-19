@@ -48,7 +48,7 @@ postgresql:
   bin_dir: '/usr/pgsql-{{ postgres.version }}/bin/'
   connect_address: '{{ ansible_host }}'
   data_dir: '{{ postgres.data_directory }}'
-  listen: '{{ postgres.listen_addresses | join(",")}},{{ ansible_host }}'
+  listen: '{{ postgres.listen_addresses | join(",")}}'
   parameters:
     password_encryption: {{ postgres.password_encryption }}
   pg_hba:
