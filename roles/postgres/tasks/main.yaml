@@ -22,6 +22,8 @@
     delay: 2
     timeout: 30
   register: "patroni_port"
+  ignore_errors: true
+  changed_when: false
 
 - name: "patroni | check current status"
   tags: ["patroni", "bootstrap"]
