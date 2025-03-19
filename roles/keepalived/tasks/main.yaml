@@ -1,0 +1,27 @@
+---
+- name: "install packages on the hosts"
+  ansible.builtin.package:
+    name: "{{ item }}"
+    state: "present"
+  with_items:
+    - "keepalived"
+
+- name: "keepalived | create keepalived_script group"
+  ansible.builtin.group:
+    name: "keepalived_script"
+    state: "present"
+
+- name: "keepalived | create keepalived_script user"
+  ansible.builtin.user:
+    name: "keepalived_script"
+    groups: "keepalived_script"
+    shell: "/bin/false"
+    state: "present"
+    password: "!"
+    create_home: false
+    system: true
+
+- name: "keepalived | ensure script path"
+  ansible.builtin.file:
+    dest: "/usr/libexec/keepalived/scripts"
+    state: "directory"

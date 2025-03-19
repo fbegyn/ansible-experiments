@@ -1,0 +1,14 @@
+[Unit]
+Description=Demo application for postgres
+After=syslog.target
+After=network-online.target
+
+[Service]
+Type=simple
+
+Environment=FLASK_APP={{ python.root }}/run.py
+WorkingDirectory={{python.root }}
+ExecStart=flask run --host {{ python.host }} --port {{ python.port }}
+
+[Install]
+WantedBy=multi-user.target

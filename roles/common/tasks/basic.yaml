@@ -16,7 +16,6 @@
     - "vim"
     - "man"
     - "epel-release"
-    - "jq"
   notify:
     - "enable sshd"
     - "enable firewalld"

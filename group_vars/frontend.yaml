@@ -3,3 +3,13 @@ keepalived:
   virtual_router_id: 100
   auth_pass: "hello12345world"
   virtual_ip: "10.5.30.60"
+
+python:
+  host: "{{ ansible_host }}"
+  db:
+    host: "10.5.30.61"
+    port: 5432
+    database: "core"
+    table: "zwemwater"
+    username: "VIB"
+    password: "core"

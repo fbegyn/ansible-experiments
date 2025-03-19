@@ -9,3 +9,8 @@ users:
   ssh_pub_keys:
     - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINK7mMVKOmELe+FVvn1oWNRwKiANgTwcnzte3vWK3nMV"
   shell: "/bin/bash"
+
+consul:
+  retry_join: ["10.5.30.55"]
+  bind_addr: "{{ ansible_host }}"
+  client_addr: "0.0.0.0"

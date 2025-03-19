@@ -1,8 +1,8 @@
 ---
-- name: "consul | render server config"
+- name: "consul | render agent config"
   ansible.builtin.template:
-    src: "config.hcl.j2"
-    dest: "/etc/consul.d/config.hcl"
+    src: "agent.hcl.j2"
+    dest: "/etc/consul.d/agent.hcl"
     owner: "consul"
     group: "consul"
     mode: '0644'

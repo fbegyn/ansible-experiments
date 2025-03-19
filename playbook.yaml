@@ -6,6 +6,20 @@
     - role: "common"
       tags: ["common", "base"]
 
+- name: "setup consul"
+  hosts: all
+  become: true
+  tags: ["consul"]
+  roles:
+    - role: "consul"
+
+- name: "setup keepalived"
+  hosts: ["frontend", "db", "lb"]
+  become: true
+  tags: ["keepalived"]
+  roles:
+    - role: "keepalived"
+
 - name: "setup frontend hosts"
   hosts: frontend
   become: true
@@ -13,21 +27,15 @@
   roles:
     - role: "nginx"
       tags: ["nginx", "frontend"]
+    - role: "demo-app"
+      tags: ["demo-app", "frontend"]
 
-- name: "setup consul"
-  hosts: consul
+- name: "setup database nodes"
+  hosts: db
   become: true
-  tags: ["consul", "application"]
-  roles:
-    - role: "consul"
-      tags: ["consul", "backend"]
-
-- name: "setup backend hosts"
-  hosts: backend
-  become: true
-  tags: ["backend", "application"]
+  tags: ["db", "application"]
   roles:
     - role: "postgres"
-      tags: ["postgres", "backend"]
+      tags: ["postgres", "db"]
       environment:
         PGDATA: "{{ postgres.data_directory }}"

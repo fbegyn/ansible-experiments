@@ -1,13 +1,9 @@
 ---
 keepalived:
+  state: "BACKUP"
   virtual_router_id: 100
   auth_pass: "hello12345world"
   virtual_ip: "10.5.30.61"
-
-consul:
-  retry_join: ["10.5.30.55"]
-  bind_addr: "0.0.0.0"
-  client_addr: "0.0.0.0"
 
 postgres:
   data_directory: "/var/lib/postgres/17/data"

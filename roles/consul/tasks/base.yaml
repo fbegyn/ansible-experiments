@@ -15,21 +15,18 @@
 
 - name: "install packages on the hosts"
   ansible.builtin.package:
-    name: "{{ item }}"
+    name: "consul"
     state: "present"
-  with_items:
-    - "consul"
-    - "keepalived"
+  notify:
+    - "start consul"
 
 - name: "ensure services enabled"
   ansible.builtin.service:
-    name: "{{ item }}"
+    name: "consul"
     enabled: true
-  with_items:
-    - "consul"
-    - "keepalived"
 
 - name: "consul | allow consul on firewalld"
+  when: "consul.server == 'true'"
   ansible.posix.firewalld:
     port: "{{ item }}"
     permanent: true
@@ -49,38 +46,6 @@
     - "8600/udp"
   notify:
     - "reload firewalld"
-
-- name: "keepalived | create keepalived_script group"
-  ansible.builtin.group:
-    name: "keepalived_script"
-    state: "present"
-  notify:
-    - "reload keepalived"
-
-- name: "keepalived | create keepalived_script user"
-  ansible.builtin.user:
-    name: "keepalived_script"
-    groups: "keepalived_script"
-    shell: "/bin/false"
-    state: "present"
-    password: "!"
-    create_home: false
-    system: true
-  notify:
-    - "reload keepalived"
-
-- name: "keepalived | ensure script path"
-  ansible.builtin.file:
-    dest: "/usr/libexec/keepalived/scripts"
-    state: "directory"
-
-- name: "keepalived | template config"
-  ansible.builtin.template:
-    src: "keepalived.conf.j2"
-    dest: "/etc/keepalived/keepalived.conf"
-    mode: '0644'
-  notify:
-    - "reload keepalived"
 
 - name: "consul | create consul group"
   ansible.builtin.group:

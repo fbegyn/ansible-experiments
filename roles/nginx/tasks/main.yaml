@@ -6,6 +6,8 @@
   with_items:
     - "nginx"
     - "keepalived"
+    - "python3-psycopg2"
+    - "python3-flask"
   notify:
     - "start nginx"
     - "start keepalived"
@@ -48,26 +50,6 @@
   notify:
     - "reload firewalld"
 
-- name: "keepalived | create keepalived_script group"
-  ansible.builtin.group:
-    name: "keepalived_script"
-    state: "present"
-
-- name: "keepalived | create keepalived_script user"
-  ansible.builtin.user:
-    name: "keepalived_script"
-    groups: "keepalived_script"
-    shell: "/bin/false"
-    state: "present"
-    password: "!"
-    create_home: false
-    system: true
-
-- name: "keepalived | ensure script path"
-  ansible.builtin.file:
-    dest: "/usr/libexec/keepalived/scripts"
-    state: "directory"
-
 - name: "keepalived | deploy nginx health check"
   ansible.builtin.copy:
     src: "check_nginx.sh"
@@ -93,3 +75,4 @@
   with_items:
     - "nginx"
     - "keepalived"
+

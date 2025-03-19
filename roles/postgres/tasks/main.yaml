@@ -4,11 +4,6 @@
   ansible.builtin.import_tasks:
     file: "base.yaml"
 
-- name: "consul"
-  tags: ["consul", "agent", "setup"]
-  ansible.builtin.import_tasks:
-    file: "consul.yaml"
-
 - name: "postgres"
   tags: ["postgres", "setup"]
   ansible.builtin.import_tasks:
@@ -21,14 +16,13 @@
 
 # when bootstrapping, spin up main instance at first
 - name: "patroni-bootstrap"
-  when: "inventory_hostname in groups['db-primary']"
+  when: "inventory_hostname in groups['db-bootstrap']"
   tags: ["patroni", "bootstrap"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"
 
 # then run against the entire DB cluster
 - name: "patroni-cluster"
-  when: "inventory_hostname in groups['backend']"
   tags: ["patroni", "cluster"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"

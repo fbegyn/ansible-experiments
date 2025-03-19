@@ -1,0 +1,55 @@
+#! /usr/bin/env python3
+from flask import Flask, render_template
+import psycopg2
+
+app = Flask(__name__)
+
+# Database connection details
+DB_HOST = "{{ python.db.host }}"  # Change to your host
+DB_NAME = "{{ python.db.database }}"  # Change to your database name
+DB_USER = "{{ python.db.username }}"  # Change to your PostgreSQL username
+DB_PASS = "{{ python.db.password }}"  # Change to your PostgreSQL password
+
+
+# Function to fetch data from the PostgreSQL database
+def get_table_data():
+    try:
+        # Connect to the PostgreSQL server
+        connection = psycopg2.connect(
+            host=DB_HOST,
+            dbname=DB_NAME,
+            user=DB_USER,
+            password=DB_PASS
+        )
+
+        # Create a cursor to execute queries
+        cursor = connection.cursor()
+
+        # Execute a query to get all the rows from a table
+        cursor.execute("SELECT * FROM {{ python.db.table }}")
+        rows = cursor.fetchall()
+
+        # Get the column names
+        column_names = [desc[0] for desc in cursor.description]
+        if connection:
+            cursor.close()
+            connection.close()
+
+        return column_names, rows
+
+    except Exception as error:
+        print("Error fetching data from PostgreSQL:", error)
+        return [], []
+
+# Route to render the data in an HTML table
+@app.route('/')
+def show_table():
+    # Fetch the table data
+    column_names, rows = get_table_data()
+
+    # Render the data as an HTML table using the template
+    return render_template('demo.html', columns=column_names, rows=rows)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
