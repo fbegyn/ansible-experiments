@@ -14,15 +14,6 @@
   ansible.builtin.import_tasks:
     file: "keepalived.yaml"
 
-- name: "patroni | check port"
-  tags: ["patroni", "bootstrap"]
-  ansible.builtin.wait_for:
-    host: "{{ ansible_host }}"
-    port: "{{ patroni.port }}"
-    delay: 2
-  register: "patroni_port"
-  ignore_errors: true
-
 - name: "patroni | check current status"
   tags: ["patroni", "bootstrap"]
   ansible.builtin.command: "/usr/sbin/get-node-role.sh"
@@ -36,7 +27,7 @@
   tags: ["patroni", "bootstrap"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"
-  when: "patroni_port.failed or patroni_cmd.rc != 0"
+  when: "patroni_cmd.rc != 0"
 
 # then run against the entire DB cluster
 - name: "patroni-cluster"

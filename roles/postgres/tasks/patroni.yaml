@@ -80,9 +80,11 @@
     host: "{{ ansible_host }}"
     port: "{{ patroni.port }}"
     delay: 2
+    timeout: 60
 
 - name: "postgresql | wait for startup"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
+    timeout: 60

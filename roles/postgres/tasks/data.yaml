@@ -4,12 +4,14 @@
     host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
+    timeout: 60
 
 - name: "patroni | check port"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ patroni.port }}"
     delay: 2
+    timeout: 60
 
 - name: "patroni | check current status"
   ansible.builtin.command: "/usr/sbin/get-node-role.sh"
