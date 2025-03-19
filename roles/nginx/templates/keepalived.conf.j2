@@ -1,5 +1,9 @@
 # this file is managed by ansible, resistance is futile
 
+global_defs {
+  enable_script_security
+}
+
 vrrp_track_process track_nginx {
     process nginx
     delay 1

@@ -1,0 +1,18 @@
+#! /usr/bin/env bash
+set -euo pipefail
+
+node=$(patronictl -c /etc/patroni/patroni.yml list -f json | jq '.[] | select(.Member | contains("{{ ansible_hostname }}"))')
+
+status=$(echo ${node} | jq -r '.Role')
+
+case $status in
+  "Leader") echo "up and running as Leader"
+          exit 0
+          ;;
+  "Replica") echo "running as Replica, exiting 1"
+          exit 1
+          ;;
+  *) echo "unkown state, exiting 2"
+          exit 2
+          ;;
+esac

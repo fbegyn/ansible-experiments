@@ -1,0 +1,21 @@
+#! /usr/bin/env bash
+set -euo pipefail
+
+TYPE=$1
+NAME=$2
+STATE=$3
+
+case $STATE in
+        "MASTER") echo "node has become master"
+                  exit 0
+                  ;;
+        "BACKUP") echo "node has become backup"
+                  exit 0
+                  ;;
+        "FAULT")  echo "node has become faulty"
+                  exit 0
+                  ;;
+        *)        echo "unknown state"
+                  exit 1
+                  ;;
+esac

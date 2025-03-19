@@ -1,8 +1,14 @@
 # this file is managed by ansible, resistance is futile
 
-vrrp_track_process track_postgres {
-    process postgres
-    delay 1
+global_defs {
+  enable_script_security
+}
+
+vrrp_script check_patroni_leader {
+   script /usr/libexec/keepalived/scripts/patroni_check.sh
+   interval 2
+   fall 2
+   rise 2
 }
 
 vrrp_instance POSTGRESQL {
@@ -21,7 +27,9 @@ vrrp_instance POSTGRESQL {
         {{ keepalived.virtual_ip }}
     }
 
-    track_process {
-        track_postgres
+    track_script {
+        check_patroni_leader
     }
+
+    notify /usr/libexec/keepalived/scripts/patroni_notify.sh
 }

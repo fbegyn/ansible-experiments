@@ -23,6 +23,22 @@
     dest: "/usr/libexec/keepalived/scripts"
     state: "directory"
 
+- name: "keepalived | patroni check script"
+  ansible.builtin.template:
+    src: "keepalived_patroni_check.sh.j2"
+    dest: "/usr/libexec/keepalived/scripts/patroni_check.sh"
+    mode: '0755'
+    owner: "keepalived_script"
+    group: "keepalived_script"
+
+- name: "keepalived | patroni notify script"
+  ansible.builtin.template:
+    src: "keepalived_patroni_check.sh.j2"
+    dest: "/usr/libexec/keepalived/scripts/patroni_notify.sh"
+    mode: '0755'
+    owner: "keepalived_script"
+    group: "keepalived_script"
+
 - name: "keepalived | template config"
   ansible.builtin.template:
     src: "keepalived.conf.j2"
