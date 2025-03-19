@@ -12,6 +12,6 @@ back-01 ansible_host=10.5.30.53
 [consul]
 consul-01 ansible_host=10.5.30.55
 
-[lb]
-lb-01 ansible_host=10.5.30.56
-lb-02 ansible_host=10.5.30.57
+# [lb]
+# lb-01 ansible_host=10.5.30.56
+# lb-02 ansible_host=10.5.30.57
