@@ -13,3 +13,11 @@
   tags: ["users"]
   ansible.builtin.import_tasks:
     file: "user.yaml"
+
+- name: "ensure running service"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "sshd"
+    - "firewalld"

@@ -68,3 +68,10 @@
     - "nginx"
     - "keepalived"
 
+- name: "ensure running service"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "nginx"
+    - "keepalived"

@@ -85,3 +85,10 @@
     mode: '0644'
   notify:
     - "reload nginx"
+
+- name: "ensure running service"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "demo"

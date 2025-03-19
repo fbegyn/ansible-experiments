@@ -15,3 +15,10 @@
   ansible.builtin.import_tasks:
     file: "agent.yaml"
   when: "not consul.server"
+
+- name: "ensure running service"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "consul"

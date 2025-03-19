@@ -62,3 +62,12 @@
   tags: ["data"]
   ansible.builtin.import_tasks:
     file: "data.yaml"
+
+- name: "ensure running service"
+  ansible.builtin.service:
+    name: "{{ item }}"
+    state: "started"
+  with_items:
+    - "patroni"
+    - "keepalived"
+    - "consul"
