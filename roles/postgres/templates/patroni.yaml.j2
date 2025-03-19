@@ -46,15 +46,15 @@ postgresql:
       password: '{{ postgres.username }}'
       username: '{{ postgres.password }}'
   bin_dir: '/usr/pgsql-{{ postgres.version }}/bin/'
-  connect_address: '{{ ansible_host }}:{{ postgres.port }}'
+  connect_address: '{{ ansible_host }}'
   data_dir: '{{ postgres.data_directory }}'
-  listen: '{{ ansible_host }}:{{ postgres.port }}'
+  listen: '{{ postgres.listen_addresses | join(",")}},{{ ansible_host }}'
   parameters:
     password_encryption: {{ postgres.password_encryption }}
   pg_hba:
    - local all all {{ postgres.password_encryption }}
-   - host postgres replication 127.0.0.1/8 {{ postgres.password_encryption }}
-   - host replication replication 127.0.0.1/8 {{ postgres.password_encryption }}
+   - host all all 127.0.0.1/32 {{ postgres.password_encryption }}
+   - host all all ::1/128 {{ postgres.password_encryption }}
    - host replication all {{ postgres.replication_network }} {{ postgres.password_encryption }}
    - host all all {{ postgres.trusted_network }} {{ postgres.password_encryption }}
 

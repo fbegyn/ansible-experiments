@@ -7,8 +7,7 @@ keepalived:
 
 postgres:
   version: "17"
-  listen_addresses: "127.0.0.1"
-  connect_addresses: "127.0.0.1"
+  listen_addresses: ["127.0.0.1"]
   port: 5432
   username: "postgres"
   password: "postgres"

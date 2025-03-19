@@ -12,8 +12,7 @@ consul:
 postgres:
   data_directory: "/var/lib/postgres/17/data"
   home_directory: "/var/lib/postgres"
-  listen_addresses: "0.0.0.0"
-  connect_addresses: "10.5.30.61"
+  listen_addresses: [ "*" ]
   trusted_network: "10.5.0.0/16"
   replication_network: "10.5.0.0/16"
   replication:
