@@ -10,9 +10,10 @@ consul:
   client_addr: "0.0.0.0"
 
 postgres:
-  primary_address: "10.5.30.53"
-  data_directory: "/var/lib/postgres/data"
-  listen_addresses: "*"
+  data_directory: "/var/lib/postgres/17/data"
+  home_directory: "/var/lib/postgres"
+  listen_addresses: "0.0.0.0"
+  connect_addresses: "10.5.30.61"
   trusted_network: "10.5.0.0/16"
   replication_network: "10.5.0.0/16"
   replication:

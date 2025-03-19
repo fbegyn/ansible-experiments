@@ -1,11 +1,13 @@
 ---
 - name: "postgresql | check port"
   ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
 
 - name: "postgresql | setup users"
   community.postgresql.postgresql_user:
+    host: "{{ ansible_host }}"
     name: "{{ item.name }}"
     password: "{{ item.password }}"
     db: "{{ item.database }}"
@@ -14,6 +16,7 @@
 
 - name: "postgresql | grant privileges"
   community.postgresql.postgresql_privs:
+    host: "{{ ansible_host }}"
     database: "{{ item.database }}"
     privs: "ALL"
     type: "database"
@@ -23,6 +26,7 @@
 
 - name: "postgresql | grant privileges"
   community.postgresql.postgresql_privs:
+    host: "{{ ansible_host }}"
     database: "{{ item.database }}"
     privs: "ALL"
     type: "table"

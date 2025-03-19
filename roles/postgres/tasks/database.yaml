@@ -1,10 +1,12 @@
 ---
 - name: "postgresql | check port"
   ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
 
 - name: "postgresql | setup databases"
   community.postgresql.postgresql_db:
+    host: "{{ ansible_host }}"
     name: "{{ item.name }}"
   with_items: "{{ postgres.databases }}"

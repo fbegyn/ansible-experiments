@@ -4,6 +4,7 @@
 # validating the table exists and only loading after that is not the case.
 - name: "postgresql | check port"
   ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
 
@@ -17,6 +18,7 @@
 
 - name: "postgresql | setup table for data"
   community.postgresql.postgresql_table:
+    host: "{{ ansible_host }}"
     name: "{{ item.table }}"
     db: "{{ item.database }}"
     columns: "{{ item.columns }}"
@@ -25,6 +27,7 @@
 
 - name: "postgresql | import data"
   community.postgresql.postgresql_copy:
+    host: "{{ ansible_host }}"
     copy_from: "/tmp/{{ item.source }}"
     db: "{{ item.database }}"
     dst: "{{ item.table }}"

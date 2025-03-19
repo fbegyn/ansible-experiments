@@ -4,37 +4,50 @@
   ansible.builtin.import_tasks:
     file: "base.yaml"
 
-# - name: "primary setup"
-#   when: "inventory_hostname in groups['db-primary']"
-#   tags: ["primary"]
-#   ansible.builtin.import_tasks:
-#     file: "primary.yaml"
+- name: "consul"
+  tags: ["consul", "agent", "setup"]
+  ansible.builtin.import_tasks:
+    file: "consul.yaml"
 
-- name: "patroni"
-  tags: ["patroni"]
+- name: "postgres"
+  tags: ["postgres", "setup"]
+  ansible.builtin.import_tasks:
+    file: "postgres.yaml"
+
+- name: "keepalived"
+  tags: ["keepalived", "setup"]
+  ansible.builtin.import_tasks:
+    file: "keepalived.yaml"
+
+# when bootstrapping, spin up main instance at first
+- name: "patroni-bootstrap"
+  when: "inventory_hostname in groups['db-primary']"
+  tags: ["patroni", "bootstrap"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"
 
-# - name: "database setup"
-#   become_user: "postgres"
-#   tags: ["primary", "setup"]
-#   ansible.builtin.import_tasks:
-#     file: "database.yaml"
-#
-# - name: "user setup"
-#   become_user: "postgres"
-#   tags: ["primary", "setup"]
-#   ansible.builtin.import_tasks:
-#     file: "users.yaml"
-#
-# - name: "data setup"
-#   when: "inventory_hostname in groups['db-primary']"
-#   become_user: "postgres"
-#   tags: ["setup","data"]
-#   ansible.builtin.import_tasks:
-#     file: "data.yaml"
-
-- name: "keepalived"
-  tags: ["keepalived"]
+# then run against the entire DB cluster
+- name: "patroni-cluster"
+  when: "inventory_hostname in groups['backend']"
+  tags: ["patroni", "cluster"]
   ansible.builtin.import_tasks:
-    file: "keepalived.yaml"
+    file: "patroni.yaml"
+
+- name: "database setup"
+  become_user: "postgres"
+  tags: ["primary", "setup"]
+  ansible.builtin.import_tasks:
+    file: "database.yaml"
+
+- name: "user setup"
+  become_user: "postgres"
+  tags: ["primary", "setup"]
+  ansible.builtin.import_tasks:
+    file: "users.yaml"
+
+- name: "data setup"
+  when: "inventory_hostname in groups['db-primary']"
+  become_user: "postgres"
+  tags: ["setup", "data"]
+  ansible.builtin.import_tasks:
+    file: "data.yaml"

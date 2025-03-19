@@ -1,3 +1,4 @@
+---
 - name: "keepalived | create keepalived_script group"
   ansible.builtin.group:
     name: "keepalived_script"

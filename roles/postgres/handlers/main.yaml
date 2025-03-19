@@ -1,38 +1,7 @@
 ---
-# postgresql@{{ ansible.unit_target }}
-- name: "start postgresql"
-  ansible.builtin.service:
-    name: "postgresql-{{ postgres.version }}"
-    state: "started"
-- name: "stop postgresql"
-  ansible.builtin.service:
-    name: "postgresql-{{ postgres.version }}"
-    state: "stopped"
-- name: "restart postgresql"
-  ansible.builtin.service:
-    name: "postgresql-{{ postgres.version }}"
-    state: "restarted"
-- name: "reload postgresql"
-  ansible.builtin.service:
-    name: "postgresql-{{ postgres.version }}"
-    state: "reloaded"
-# pgbouncer
-- name: "start pgbouncer"
-  ansible.builtin.service:
-    name: "pgbouncer"
-    state: "started"
-- name: "stop pgbouncer"
-  ansible.builtin.service:
-    name: "pgbouncer"
-    state: "stopped"
-- name: "restart pgbouncer"
-  ansible.builtin.service:
-    name: "pgbouncer"
-    state: "restarted"
-- name: "reload pgbouncer"
-  ansible.builtin.service:
-    name: "pgbouncer"
-    state: "reloaded"
+- name: "reload daemons"
+  ansible.builtin.systemd_service:
+    daemon_reload: true
 # firewalld
 - name: "start firewalld"
   ansible.builtin.service:

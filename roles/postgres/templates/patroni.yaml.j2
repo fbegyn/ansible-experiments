@@ -17,6 +17,7 @@ bootstrap:
     loop_wait: 10
     retry_timeout: 10
     ttl: 30
+    maximum_lag_on_failover: 10000
     postgresql:
       parameters:
         hot_standby: 'on'
@@ -42,18 +43,23 @@ postgresql:
       password: '{{ postgres.replication.username }}'
       username: '{{ postgres.replication.password }}'
     superuser:
-      password: '{{ postgres.replication.username }}'
-      username: '{{ postgres.replication.password }}'
-  bin_dir: '{{ postgres.bin_directory }}'
-  connect_address: {{ ansible_host }}:{{ postgres.port }}
+      password: '{{ postgres.username }}'
+      username: '{{ postgres.password }}'
+  bin_dir: '/usr/pgsql-{{ postgres.version }}/bin/'
+  connect_address: '{{ ansible_host }}:{{ postgres.port }}'
   data_dir: '{{ postgres.data_directory }}'
-  listen: {{ ansible_host }}:{{ postgres.port }}
+  listen: '{{ ansible_host }}:{{ postgres.port }}'
   parameters:
     password_encryption: {{ postgres.password_encryption }}
   pg_hba:
-  - local all         all peer                               {{ postgres.password_encryption }}
-  - host  replication all {{ postgres.replication_network }} {{ postgres.password_encryption }}
-  - host  all         all {{ postgres.trusted_network }}     {{ postgres.password_encryption }}
+   - local all all {{ postgres.password_encryption }}
+   - host postgres replication 127.0.0.1/8 {{ postgres.password_encryption }}
+   - host replication replication 127.0.0.1/8 {{ postgres.password_encryption }}
+   - host replication all {{ postgres.replication_network }} {{ postgres.password_encryption }}
+   - host all all {{ postgres.trusted_network }} {{ postgres.password_encryption }}
+
+watchdog:
+  mode: {{ patroni.watchdog.mode }}
 
 tags:
   clonefrom: true

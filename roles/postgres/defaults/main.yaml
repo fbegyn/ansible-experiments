@@ -7,32 +7,17 @@ keepalived:
 
 postgres:
   version: "17"
-  primary_address: "127.0.0.1"
   listen_addresses: "127.0.0.1"
+  connect_addresses: "127.0.0.1"
   port: 5432
-  unit_target: "default"
+  username: "postgres"
+  password: "postgres"
   data_directory: "/var/lib/pgsql/17/data"
-  bin_directory: "/usr/pgsql-17/bin/"
-  max_connections: 5
-  wal:
-    level: "replica"
-    max_senders: 5
-  max_replication_slots: 2
-  hot_standby: "on"
+  home_directory: "/var/lib/pgsql"
   log:
     directory: "/var/log/postgres"
-  shared_buffers: "128MB"
-  work_mem: "8MB"
-  maintenance_work_mem: "64MB"
-  effective_cache_size: "256MB"
-  archive:
-    mode: "off"
-    command: ""
   replication_network: "127.0.0.0/8"
   trusted_network: "127.0.0.0/8"
-  standby_mode: "off"
-  primary_conninfo: "host=127.0.0.1 port=5432 user=rep_user password=rep_pass application_name=standby"
-  recovery_target_timeline: "latest"
   replication:
     application_name: "foobar"
     username: "hello"
@@ -44,9 +29,9 @@ patroni:
   port: 8008
   log:
     level: "INFO"
-
-pgbouncer:
-  port: 6432
+    directory: "/var/log/patroni"
+  watchdog:
+    mode: "off"
 
 consul:
   port: 8500
