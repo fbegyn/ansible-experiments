@@ -28,6 +28,7 @@
   ansible.builtin.command: "/usr/sbin/get-node-role.sh"
   register: "patroni_cmd"
   ignore_errors: true
+  changed_when: false
 
 # when bootstrapping, spin up main instance at first
 - name: "patroni-bootstrap"
