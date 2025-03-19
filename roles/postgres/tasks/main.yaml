@@ -14,12 +14,28 @@
   ansible.builtin.import_tasks:
     file: "keepalived.yaml"
 
+- name: "patroni | check port"
+  tags: ["patroni", "bootstrap"]
+  ansible.builtin.wait_for:
+    host: "{{ ansible_host }}"
+    port: "{{ patroni.port }}"
+    delay: 2
+  register: "patroni_port"
+  ignore_errors: true
+
+- name: "patroni | check current status"
+  tags: ["patroni", "bootstrap"]
+  ansible.builtin.command: "/usr/sbin/get-node-role.sh"
+  register: "patroni_cmd"
+  ignore_errors: true
+
 # when bootstrapping, spin up main instance at first
 - name: "patroni-bootstrap"
   when: "inventory_hostname in groups['db-bootstrap']"
   tags: ["patroni", "bootstrap"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"
+  when: "patroni_port.failed or patroni_cmd.rc != 0"
 
 # then run against the entire DB cluster
 - name: "patroni-cluster"

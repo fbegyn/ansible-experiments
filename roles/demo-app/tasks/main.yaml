@@ -20,6 +20,25 @@
     - "trusted"
     - "home"
 
+- name: "python | render demo systemd unit"
+  ansible.builtin.template:
+    src: "demo.service.j2"
+    dest: "/etc/systemd/system/demo.service"
+    mode: '0644'
+  notify:
+    - "restart demo"
+    - "enable demo"
+
+- name: "reload daemons"
+  ansible.builtin.systemd:
+    daemon_reload: true
+
+- name: "python | ensure root"
+  ansible.builtin.file:
+    dest: "{{ python.root }}"
+    state: "directory"
+    mode: "0755"
+
 - name: "python | render demo site application"
   ansible.builtin.file:
     dest: "{{ python.root }}/__init__.py"
@@ -31,12 +50,8 @@
     src: "demo.py.j2"
     dest: "{{ python.root }}/run.py"
     mode: '0755'
-
-- name: "python | ensure root"
-  ansible.builtin.file:
-    dest: "{{ python.root }}"
-    state: "directory"
-    mode: "0755"
+  notify:
+    - "restart demo"
 
 - name: "python | ensure templates"
   ansible.builtin.file:
@@ -49,16 +64,8 @@
     src: "demo.html"
     dest: "{{ python.root }}/templates/demo.html"
     mode: "0644"
-
-- name: "python | render demo systemd unit"
-  ansible.builtin.template:
-    src: "demo.service.j2"
-    dest: "/etc/systemd/system/demo.service"
-    mode: '0644'
-
-- name: "reload daemons"
-  ansible.builtin.systemd:
-    daemon_reload: true
+  notify:
+    - "restart demo"
 
 - name: "python | start demo systemd unit"
   ansible.builtin.service:
@@ -70,3 +77,5 @@
     src: "demo.conf.j2"
     dest: "/etc/nginx/conf.d/demo.conf"
     mode: '0644'
+  notify:
+    - "reload nginx"

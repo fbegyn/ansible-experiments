@@ -1,5 +1,9 @@
 ---
 # nginx
+- name: "enable nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    enabled: true
 - name: "start nginx"
   ansible.builtin.service:
     name: "nginx"

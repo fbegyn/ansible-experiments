@@ -8,12 +8,12 @@ ui_config{
   enabled = {{ consul.ui.enabled }}
 }
 
-log_level = "{{ consul.log_level }}"
+{% if consul.server %}
+server = true
+{% endif %}
 
-server = {{ consul.server }}
-bootstrap_expect = {{ consul.bootstrap_expect }}
+log_level = "{{ consul.log_level }}"
 
 bind_addr = "{{ consul.bind_addr }}"
 
 retry_join = ["{{ consul.retry_join | join('", "')  }}"]
-

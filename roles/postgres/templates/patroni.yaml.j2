@@ -55,8 +55,10 @@ postgresql:
    - local all all {{ postgres.password_encryption }}
    - host all all 127.0.0.1/32 {{ postgres.password_encryption }}
    - host all all ::1/128 {{ postgres.password_encryption }}
-   - host replication all {{ postgres.replication_network }} {{ postgres.password_encryption }}
    - host all all {{ postgres.trusted_network }} {{ postgres.password_encryption }}
+   - host replication all 127.0.0.1/8 {{ postgres.password_encryption }}
+   - host replication all ::1/128 {{ postgres.password_encryption }}
+   - host replication all {{ postgres.replication_network }} {{ postgres.password_encryption }}
 
 watchdog:
   mode: {{ patroni.watchdog.mode }}

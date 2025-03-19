@@ -5,6 +5,8 @@
     state: "present"
   with_items:
     - "keepalived"
+  notify:
+    - "enable keepalived"
 
 - name: "keepalived | create keepalived_script group"
   ansible.builtin.group:

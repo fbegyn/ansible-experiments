@@ -9,16 +9,7 @@
     - "python3-psycopg2"
     - "python3-flask"
   notify:
-    - "start nginx"
-    - "start keepalived"
-
-- name: "ensure services enabled"
-  ansible.builtin.service:
-    name: "{{ item }}"
-    enabled: true
-  with_items:
-    - "nginx"
-    - "keepalived"
+    - "enable nginx"
 
 - name: "nginx | allow http on firewalld"
   ansible.posix.firewalld:

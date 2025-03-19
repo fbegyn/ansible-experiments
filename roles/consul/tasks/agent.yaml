@@ -1,7 +1,21 @@
 ---
+- name: "consul | allow consul on firewalld"
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: "enabled"
+  with_items:
+    - "8301/tcp"
+    - "8302/tcp"
+    - "8301/udp"
+    - "8302/udp"
+  notify:
+    - "reload firewalld"
+
 - name: "consul | render agent config"
   ansible.builtin.template:
-    src: "agent.hcl.j2"
+    src: "consul.hcl.j2"
     dest: "/etc/consul.d/agent.hcl"
     owner: "consul"
     group: "consul"

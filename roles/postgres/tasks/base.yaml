@@ -34,15 +34,7 @@
     - "postgresql{{ postgres.version }}-server"
     - "postgresql{{ postgres.version }}-contrib"
     - "patroni"
-    - "consul"
     - "patroni-consul"
     - "keepalived"
-
-- name: "enable service"
-  ansible.builtin.service:
-    name: "{{ item }}"
-    enabled: true
-  with_items:
-    - "patroni"
-    - "keepalived"
-    - "consul"
+  notify:
+    - "enable patroni"

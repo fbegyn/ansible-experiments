@@ -37,6 +37,10 @@
     name: "keepalived"
     state: "reloaded"
 # patroni
+- name: "enable patroni"
+  ansible.builtin.service:
+    name: "patroni"
+    enabled: true
 - name: "start patroni"
   ansible.builtin.service:
     name: "patroni"
@@ -52,21 +56,4 @@
 - name: "reload patroni"
   ansible.builtin.service:
     name: "patroni"
-    state: "reloaded"
-# consul
-- name: "start consul"
-  ansible.builtin.service:
-    name: "consul"
-    state: "started"
-- name: "stop consul"
-  ansible.builtin.service:
-    name: "consul"
-    state: "stopped"
-- name: "restart consul"
-  ansible.builtin.service:
-    name: "consul"
-    state: "restarted"
-- name: "reload consul"
-  ansible.builtin.service:
-    name: "consul"
     state: "reloaded"

@@ -1,5 +1,9 @@
 ---
 # consul
+- name: "enable consul"
+  ansible.builtin.service:
+    name: "consul"
+    enabled: true
 - name: "start consul"
   ansible.builtin.service:
     name: "consul"
@@ -21,10 +25,6 @@
   ansible.builtin.service:
     name: "firewalld"
     state: "started"
-- name: "stop firewalld"
-  ansible.builtin.service:
-    name: "firewalld"
-    state: "stopped"
 - name: "restart firewalld"
   ansible.builtin.service:
     name: "firewalld"
@@ -32,21 +32,4 @@
 - name: "reload firewalld"
   ansible.builtin.service:
     name: "firewalld"
-    state: "reloaded"
-# keepalived
-- name: "start keepalived"
-  ansible.builtin.service:
-    name: "keepalived"
-    state: "started"
-- name: "stop keepalived"
-  ansible.builtin.service:
-    name: "keepalived"
-    state: "stopped"
-- name: "restart keepalived"
-  ansible.builtin.service:
-    name: "keepalived"
-    state: "restarted"
-- name: "reload keepalived"
-  ansible.builtin.service:
-    name: "keepalived"
     state: "reloaded"

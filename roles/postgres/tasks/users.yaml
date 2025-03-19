@@ -24,6 +24,7 @@
     # host: "{{ ansible_host }}"
     name: "{{ item.name }}"
     db: "{{ item.database }}"
+    password: "{{ item.password }}"
     login_user: "{{ postgres.username }}"
     login_password: "{{ postgres.password }}"
   with_items:

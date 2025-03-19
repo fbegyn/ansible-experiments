@@ -5,5 +5,5 @@ keepalived:
   virtual_ip: "10.5.30.62"
 
 consul:
-  server: "true"
-  retry_join: ["127.0.0.1"]
+  server: true
+  retry_join: ["{{ ansible_host }}", "127.0.0.1"]

@@ -1,11 +1,11 @@
 server {
     listen       80;
     listen       [::]:80;
-    server_name  {nginx.server_name};
+    server_name  {{nginx.server_name}};
     root         {{ python.root }};
 
     location = / {
-        proxypass = http://{{python.host}}:{{python.port}}/
+        proxy_pass http://{{python.host}}:{{python.port}}/;
     }
 
     error_page 404 /404.html;

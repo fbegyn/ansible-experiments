@@ -1,4 +1,11 @@
----
+# Consul
+
+This role is responsible for spinning up consul server and agents. It uses a set
+of variables to determine if the node runds as agent or server mode.
+
+## Defaults
+
+```
 consul:
   port: 8500
   host: "127.0.0.1"
@@ -13,3 +20,4 @@ consul:
   debug: false
   bootstrap_expect: 1
   log_level: "INFO"
+```

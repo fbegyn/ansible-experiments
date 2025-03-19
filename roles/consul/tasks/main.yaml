@@ -8,10 +8,10 @@
   tags: ["setup", "consul", "server"]
   ansible.builtin.import_tasks:
     file: "server.yaml"
-  when: "consul.server == 'true'"
+  when: "consul.server"
 
 - name: "agent setup"
   tags: ["setup", "consul", "agent"]
   ansible.builtin.import_tasks:
     file: "agent.yaml"
-  when: "consul.server != 'true'"
+  when: "not consul.server"

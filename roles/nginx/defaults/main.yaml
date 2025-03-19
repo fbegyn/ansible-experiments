@@ -1,3 +1,4 @@
+---
 keepalived:
   virtual_router_id: 100
   interface: "eth0"

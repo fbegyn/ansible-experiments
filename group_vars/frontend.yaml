@@ -4,6 +4,9 @@ keepalived:
   auth_pass: "hello12345world"
   virtual_ip: "10.5.30.60"
 
+nginx:
+  server_name: "vib.data.core"
+
 python:
   host: "{{ ansible_host }}"
   db:
@@ -12,4 +15,4 @@ python:
     database: "core"
     table: "zwemwater"
     username: "VIB"
-    password: "core"
+    password: "data"

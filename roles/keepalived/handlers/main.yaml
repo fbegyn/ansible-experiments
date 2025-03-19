@@ -1,0 +1,6 @@
+---
+# keepalived
+- name: "enable keepalived"
+  ansible.builtin.service:
+    name: "keepalived"
+    enabled: true

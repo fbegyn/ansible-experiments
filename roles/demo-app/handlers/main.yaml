@@ -1,0 +1,27 @@
+---
+# demo
+- name: "enable demo"
+  ansible.builtin.service:
+    name: "demo"
+    enabled: true
+- name: "start demo"
+  ansible.builtin.service:
+    name: "demo"
+    state: "started"
+- name: "stop demo"
+  ansible.builtin.service:
+    name: "demo"
+    state: "stopped"
+- name: "restart demo"
+  ansible.builtin.service:
+    name: "demo"
+    state: "restarted"
+- name: "reload demo"
+  ansible.builtin.service:
+    name: "demo"
+    state: "reloaded"
+# nginx
+- name: "reload nginx"
+  ansible.builtin.service:
+    name: "nginx"
+    state: "reloaded"
