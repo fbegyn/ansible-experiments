@@ -62,6 +62,10 @@ consul:
   client_addr: "0.0.0.0"
 ```
 
+![webapp result](./webapp-result.png)
+
+![webapp patroni](./webapp-patroni.png)
+
 The webapp frontend nodes have keepalived with a VIP available on all running
 instances. This makes the frontend application available through the VIP, as long
 as a single frontend node is running.
