@@ -1,0 +1,11 @@
+# This file contains ignores rule violations for ansible-lint
+group_vars/all.yaml yaml[indentation]
+group_vars/all.yaml yaml[line-length]
+group_vars/db.yaml yaml[brackets]
+roles/common/tasks/python.yaml command-instead-of-module
+roles/common/tasks/python.yaml command-instead-of-shell
+roles/common/tasks/python.yaml no-changed-when
+roles/consul/defaults/main.yaml var-naming[no-role-prefix]
+roles/demo-app role-name
+roles/nginx/defaults/main.yaml var-naming[no-role-prefix]
+roles/postgres/defaults/main.yaml var-naming[no-role-prefix]

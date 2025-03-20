@@ -1,20 +1,20 @@
 ---
-- name: "install and basics"
+- name: "Install and basics"
   tags: ["base"]
   ansible.builtin.import_tasks:
     file: "base.yaml"
 
-- name: "postgres"
+- name: "Postgres"
   tags: ["postgres", "setup"]
   ansible.builtin.import_tasks:
     file: "postgres.yaml"
 
-- name: "keepalived"
+- name: "Keepalived"
   tags: ["keepalived", "setup"]
   ansible.builtin.import_tasks:
     file: "keepalived.yaml"
 
-- name: "patroni | check port"
+- name: "Patroni | check port"
   tags: ["patroni", "bootstrap"]
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
@@ -25,7 +25,7 @@
   ignore_errors: true
   changed_when: false
 
-- name: "patroni | check current status"
+- name: "Patroni | check current status"
   tags: ["patroni", "bootstrap"]
   ansible.builtin.command: "/usr/sbin/get-node-role.sh"
   register: "patroni_cmd"
@@ -33,37 +33,40 @@
   changed_when: false
 
 # when bootstrapping, spin up main instance at first
-- name: "patroni-bootstrap"
+- name: "Patroni-bootstrap"
   when: "inventory_hostname in groups['db-bootstrap'] and (patroni_cmd.rc != 0 or patroni_port.failed)"
   tags: ["patroni", "bootstrap"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"
 
 # then run against the entire DB cluster
-- name: "patroni-cluster"
+- name: "Patroni-cluster"
   tags: ["patroni", "cluster"]
   ansible.builtin.import_tasks:
     file: "patroni.yaml"
 
-- name: "database setup"
+- name: "Database setup"
+  become: true
   become_user: "postgres"
   tags: ["data", "database"]
   ansible.builtin.import_tasks:
     file: "database.yaml"
 
-- name: "user setup"
+- name: "User setup"
+  become: true
   become_user: "postgres"
   tags: ["data", "users"]
   ansible.builtin.import_tasks:
     file: "users.yaml"
 
-- name: "data setup"
+- name: "Data setup"
+  become: true
   become_user: "postgres"
   tags: ["data"]
   ansible.builtin.import_tasks:
     file: "data.yaml"
 
-- name: "ensure running service"
+- name: "Ensure running service"
   ansible.builtin.service:
     name: "{{ item }}"
     state: "started"

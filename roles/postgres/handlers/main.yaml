@@ -1,59 +1,59 @@
 ---
-- name: "reload daemons"
+- name: "Reload daemons"
   ansible.builtin.systemd_service:
     daemon_reload: true
 # firewalld
-- name: "start firewalld"
+- name: "Start firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "started"
-- name: "stop firewalld"
+- name: "Stop firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "stopped"
-- name: "restart firewalld"
+- name: "Restart firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "restarted"
-- name: "reload firewalld"
+- name: "Reload firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "reloaded"
 # keepalived
-- name: "start keepalived"
+- name: "Start keepalived"
   ansible.builtin.service:
     name: "keepalived"
     state: "started"
-- name: "stop keepalived"
+- name: "Stop keepalived"
   ansible.builtin.service:
     name: "keepalived"
     state: "stopped"
-- name: "restart keepalived"
+- name: "Restart keepalived"
   ansible.builtin.service:
     name: "keepalived"
     state: "restarted"
-- name: "reload keepalived"
+- name: "Reload keepalived"
   ansible.builtin.service:
     name: "keepalived"
     state: "reloaded"
 # patroni
-- name: "enable patroni"
+- name: "Enable patroni"
   ansible.builtin.service:
     name: "patroni"
     enabled: true
-- name: "start patroni"
+- name: "Start patroni"
   ansible.builtin.service:
     name: "patroni"
     state: "started"
-- name: "stop patroni"
+- name: "Stop patroni"
   ansible.builtin.service:
     name: "patroni"
     state: "stopped"
-- name: "restart patroni"
+- name: "Restart patroni"
   ansible.builtin.service:
     name: "patroni"
     state: "restarted"
-- name: "reload patroni"
+- name: "Reload patroni"
   ansible.builtin.service:
     name: "patroni"
     state: "reloaded"

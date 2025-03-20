@@ -1,5 +1,5 @@
 ---
-- name: "install packages on the hosts"
+- name: "Install packages on the hosts"
   ansible.builtin.package:
     name: "{{ item }}"
     state: "present"
@@ -7,7 +7,7 @@
     - "python3-psycopg2"
     - "python3-flask"
 
-- name: "python | allow demo on firewalld"
+- name: "Python | allow demo on firewalld"
   ansible.posix.firewalld:
     port: "{{ python.port }}/tcp"
     permanent: true
@@ -20,73 +20,73 @@
     - "trusted"
     - "home"
 
-- name: "python | render demo systemd unit"
+- name: "Python | render demo systemd unit"
   ansible.builtin.template:
     src: "demo.service.j2"
     dest: "/etc/systemd/system/demo.service"
     mode: '0644'
   notify:
-    - "restart demo"
-    - "enable demo"
+    - "Restart demo"
+    - "Enable demo"
 
-- name: "reload daemons"
+- name: "Reload daemons"
   ansible.builtin.systemd:
     daemon_reload: true
 
-- name: "python | ensure root"
+- name: "Python | ensure root"
   ansible.builtin.file:
     dest: "{{ python.root }}"
     state: "directory"
     mode: "0755"
 
-- name: "python | stat module init"
+- name: "Python | stat module init"
   ansible.builtin.stat:
     dest: "{{ python.root }}/__init__.py"
   register: "demoinit"
 
-- name: "python | init module"
+- name: "Python | init module"
   ansible.builtin.file:
     dest: "{{ python.root }}/__init__.py"
     mode: '0644'
     state: "touch"
   when: "not demoinit.stat.exists"
 
-- name: "python | render demo site application"
+- name: "Python | render demo site application"
   ansible.builtin.template:
     src: "demo.py.j2"
     dest: "{{ python.root }}/run.py"
     mode: '0755'
   notify:
-    - "restart demo"
+    - "Restart demo"
 
-- name: "python | ensure templates"
+- name: "Python | ensure templates"
   ansible.builtin.file:
     dest: "{{ python.root }}/templates"
     state: "directory"
     mode: "0755"
 
-- name: "python | ensure copy demo.html"
+- name: "Python | ensure copy demo.html"
   ansible.builtin.copy:
     src: "demo.html"
     dest: "{{ python.root }}/templates/demo.html"
     mode: "0644"
   notify:
-    - "restart demo"
+    - "Restart demo"
 
-- name: "python | start demo systemd unit"
+- name: "Python | start demo systemd unit"
   ansible.builtin.service:
     name: "demo"
     state: "started"
 
-- name: "nginx | render demo site template"
+- name: "Nginx | render demo site template"
   ansible.builtin.template:
     src: "demo.conf.j2"
     dest: "/etc/nginx/conf.d/demo.conf"
     mode: '0644'
   notify:
-    - "reload nginx"
+    - "Reload nginx"
 
-- name: "ensure running service"
+- name: "Ensure running service"
   ansible.builtin.service:
     name: "{{ item }}"
     state: "started"

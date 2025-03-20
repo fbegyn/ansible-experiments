@@ -1,10 +1,10 @@
 ---
-- name: "add consul gpg key"
+- name: "Add consul gpg key"
   ansible.builtin.rpm_key:
     key: "https://rpm.releases.hashicorp.com/gpg"
     state: "present"
 
-- name: "provide consul through hashicorp repo"
+- name: "Provide consul through hashicorp repo"
   ansible.builtin.yum_repository:
     name: "hasicorp"
     description: "Hashicorp RPM repo"
@@ -13,12 +13,12 @@
     enabled: true
     gpgcheck: true
 
-- name: "consul | create consul group"
+- name: "Consul | create consul group"
   ansible.builtin.group:
     name: "consul"
     state: "present"
 
-- name: "consul | create consul user"
+- name: "Consul | create consul user"
   ansible.builtin.user:
     name: "consul"
     groups: "consul"
@@ -28,11 +28,10 @@
     create_home: false
     system: true
 
-- name: "install packages on the hosts"
+- name: "Install packages on the hosts"
   ansible.builtin.package:
     name: "consul"
     state: "present"
   notify:
-    - "enable consul"
-    - "start consul"
-
+    - "Enable consul"
+    - "Start consul"

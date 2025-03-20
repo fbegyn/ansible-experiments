@@ -1,5 +1,5 @@
 ---
-- name: "install packages on the hosts"
+- name: "Install packages on the hosts"
   ansible.builtin.package:
     name: "{{ item }}"
     state: "present"
@@ -9,9 +9,9 @@
     - "python3-psycopg2"
     - "python3-flask"
   notify:
-    - "enable nginx"
+    - "Enable nginx"
 
-- name: "nginx | allow http on firewalld"
+- name: "Nginx | allow http on firewalld"
   ansible.posix.firewalld:
     service: "http"
     permanent: true
@@ -24,9 +24,9 @@
     - "trusted"
     - "home"
   notify:
-    - "reload firewalld"
+    - "Reload firewalld"
 
-- name: "nginx | allow https on firewalld"
+- name: "Nginx | allow https on firewalld"
   ansible.posix.firewalld:
     service: "http"
     permanent: true
@@ -39,9 +39,9 @@
     - "trusted"
     - "home"
   notify:
-    - "reload firewalld"
+    - "Reload firewalld"
 
-- name: "keepalived | deploy nginx health check"
+- name: "Keepalived | deploy nginx health check"
   ansible.builtin.copy:
     src: "check_nginx.sh"
     dest: "/usr/libexec/keepalived/scripts/check_nginx.sh"
@@ -49,18 +49,18 @@
     owner: "keepalived_script"
     group: "keepalived_script"
   notify:
-    - "reload keepalived"
+    - "Reload keepalived"
 
-- name: "keepalived | template config"
+- name: "Keepalived | template config"
   ansible.builtin.template:
     src: "keepalived.conf.j2"
     dest: "/etc/keepalived/keepalived.conf"
     mode: '0644'
   notify:
-    - "restart keepalived"
-    - "reload keepalived"
+    - "Restart keepalived"
+    - "Reload keepalived"
 
-- name: "ensure services started"
+- name: "Ensure services started"
   ansible.builtin.service:
     name: "{{ item }}"
     state: "started"
@@ -68,7 +68,7 @@
     - "nginx"
     - "keepalived"
 
-- name: "ensure running service"
+- name: "Ensure running service"
   ansible.builtin.service:
     name: "{{ item }}"
     state: "started"

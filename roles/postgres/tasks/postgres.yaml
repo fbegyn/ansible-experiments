@@ -1,5 +1,5 @@
 ---
-- name: "postgresql | allow postgresql on firewalld"
+- name: "Postgresql | allow postgresql on firewalld"
   ansible.posix.firewalld:
     port: "{{ postgres.port }}/tcp"
     permanent: true
@@ -12,14 +12,14 @@
     - "trusted"
     - "home"
   notify:
-    - "reload firewalld"
+    - "Reload firewalld"
 
-- name: "postgresql | create postgres group"
+- name: "Postgresql | create postgres group"
   ansible.builtin.group:
     name: "postgres"
     state: "present"
 
-- name: "postgresql | create postgresql user"
+- name: "Postgresql | create postgresql user"
   ansible.builtin.user:
     name: "postgres"
     groups: "postgres"
@@ -29,7 +29,7 @@
     create_home: true
     home: "{{ postgres.home_directory }}"
 
-- name: "postgresql | ensure home dir"
+- name: "Postgresql | ensure home dir"
   ansible.builtin.file:
     dest: "{{ postgres.home_directory }}"
     state: "directory"
@@ -37,7 +37,7 @@
     group: "postgres"
     mode: "0750"
 
-- name: "postgresql | ensure PGDATA"
+- name: "Postgresql | ensure PGDATA"
   ansible.builtin.file:
     dest: "{{ postgres.data_directory }}"
     state: "directory"
@@ -45,9 +45,10 @@
     group: "postgres"
     mode: "0750"
 
-- name: "postgresql | ensure log path"
+- name: "Postgresql | ensure log path"
   ansible.builtin.file:
     dest: "{{ postgres.log.directory }}"
     state: "directory"
     owner: "postgres"
     group: "postgres"
+    mode: '0755'

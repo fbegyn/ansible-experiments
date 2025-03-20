@@ -1,35 +1,35 @@
 ---
 # consul
-- name: "enable consul"
+- name: "Enable consul"
   ansible.builtin.service:
     name: "consul"
     enabled: true
-- name: "start consul"
+- name: "Start consul"
   ansible.builtin.service:
     name: "consul"
     state: "started"
-- name: "stop consul"
+- name: "Stop consul"
   ansible.builtin.service:
     name: "consul"
     state: "stopped"
-- name: "restart consul"
+- name: "Restart consul"
   ansible.builtin.service:
     name: "consul"
     state: "restarted"
-- name: "reload consul"
+- name: "Reload consul"
   ansible.builtin.service:
     name: "consul"
     state: "reloaded"
 # firewalld
-- name: "start firewalld"
+- name: "Start firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "started"
-- name: "restart firewalld"
+- name: "Restart firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "restarted"
-- name: "reload firewalld"
+- name: "Reload firewalld"
   ansible.builtin.service:
     name: "firewalld"
     state: "reloaded"

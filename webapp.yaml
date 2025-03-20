@@ -1,26 +1,26 @@
 ---
-- name: "run common role against all"
+- name: "Run common role against all"
   hosts: all
   become: true
   roles:
     - role: "common"
       tags: ["common", "base"]
 
-- name: "setup consul"
+- name: "Setup consul"
   hosts: all
   become: true
   tags: ["consul"]
   roles:
     - role: "consul"
 
-- name: "setup keepalived"
+- name: "Setup keepalived"
   hosts: ["frontend", "db", "lb"]
   become: true
   tags: ["keepalived"]
   roles:
     - role: "keepalived"
 
-- name: "setup frontend hosts"
+- name: "Setup frontend hosts"
   hosts: frontend
   become: true
   tags: ["frontend", "application"]
@@ -30,7 +30,7 @@
     - role: "demo-app"
       tags: ["demo-app", "frontend"]
 
-- name: "setup database nodes"
+- name: "Setup database nodes"
   hosts: db
   become: true
   tags: ["db", "application"]

@@ -1,5 +1,5 @@
 ---
-- name: "consul | allow consul on firewalld"
+- name: "Consul | allow consul on firewalld"
   ansible.posix.firewalld:
     port: "{{ item }}"
     permanent: true
@@ -18,9 +18,9 @@
     - "8302/udp"
     - "8600/udp"
   notify:
-    - "reload firewalld"
+    - "Reload firewalld"
 
-- name: "consul | render server config"
+- name: "Consul | render server config"
   ansible.builtin.template:
     src: "consul.hcl.j2"
     dest: "/etc/consul.d/server.hcl"
@@ -28,4 +28,4 @@
     group: "consul"
     mode: '0644'
   notify:
-    - "restart consul"
+    - "Restart consul"

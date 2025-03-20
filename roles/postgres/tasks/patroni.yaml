@@ -1,10 +1,10 @@
 ---
-- name: "patroni | create patroni group"
+- name: "Patroni | create patroni group"
   ansible.builtin.group:
     name: "patroni"
     state: "present"
 
-- name: "patroni | create patroniql user"
+- name: "Patroni | create patroniql user"
   ansible.builtin.user:
     name: "patroni"
     groups: "patroni"
@@ -14,7 +14,7 @@
     create_home: false
     system: true
 
-- name: "patroni | ensure log path"
+- name: "Patroni | ensure log path"
   ansible.builtin.file:
     dest: "{{ patroni.log.directory }}"
     state: "directory"
@@ -22,7 +22,7 @@
     group: "postgres"
     mode: '0750'
 
-- name: "patroni | allow patroni on firewalld"
+- name: "Patroni | allow patroni on firewalld"
   ansible.posix.firewalld:
     port: "{{ patroni.port }}/tcp"
     permanent: true
@@ -35,9 +35,9 @@
     - "trusted"
     - "home"
   notify:
-    - "reload firewalld"
+    - "Reload firewalld"
 
-- name: "patroni | script to get leader  IP"
+- name: "Patroni | script to get leader  IP"
   ansible.builtin.copy:
     dest: "/usr/sbin/get-leader-ip.sh"
     src: "get-leader-ip.sh"
@@ -45,7 +45,7 @@
     owner: "postgres"
     group: "postgres"
 
-- name: "patroni | script to get node role"
+- name: "Patroni | script to get node role"
   ansible.builtin.template:
     src: "get-node-role.sh.j2"
     dest: "/usr/sbin/get-node-role.sh"
@@ -53,7 +53,7 @@
     owner: "postgres"
     group: "postgres"
 
-- name: "patroni | config directory"
+- name: "Patroni | config directory"
   ansible.builtin.file:
     dest: "/etc/patroni"
     mode: '0755'
@@ -61,7 +61,7 @@
     group: "postgres"
     state: "directory"
 
-- name: "patroni | template patroni config"
+- name: "Patroni | template patroni config"
   ansible.builtin.template:
     src: "patroni.yaml.j2"
     dest: "/etc/patroni/patroni.yml"
@@ -69,27 +69,27 @@
     owner: "postgres"
     group: "postgres"
   notify:
-    - "restart patroni"
-    - "start patroni"
+    - "Restart patroni"
+    - "Start patroni"
 
-- name: "flushing handlers"
+- name: "Flushing handlers"
   ansible.builtin.meta: "flush_handlers"
 
-- name: "patroni | check port"
+- name: "Patroni | check port"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ patroni.port }}"
     delay: 2
     timeout: 30
 
-- name: "postgresql | wait for startup"
+- name: "Postgresql | wait for startup"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
     timeout: 30
 
-- name: "postgresql | setup replication user"
+- name: "Postgresql | setup replication user"
   community.postgresql.postgresql_user:
     name: "{{ postgres.replication.username }}"
     password: "{{ postgres.replication.password }}"

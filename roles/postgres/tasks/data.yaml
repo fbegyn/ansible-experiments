@@ -1,28 +1,28 @@
 ---
-- name: "postgresql | check port"
+- name: "Postgresql | check port"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ postgres.port }}"
     delay: 2
     timeout: 60
 
-- name: "patroni | check port"
+- name: "Patroni | check port"
   ansible.builtin.wait_for:
     host: "{{ ansible_host }}"
     port: "{{ patroni.port }}"
     delay: 2
     timeout: 60
 
-- name: "patroni | check current status"
+- name: "Patroni | check current status"
   ansible.builtin.command: "/usr/sbin/get-node-role.sh"
   register: "patroni_cmd"
   changed_when: false
 
-- name: "patroni | set patroni fact"
+- name: "Patroni | set patroni fact"
   ansible.builtin.set_fact:
     patroni: "{{ patroni_cmd.stdout | from_json }}"
 
-- name: "postgresql | copy file to host"
+- name: "Postgresql | copy file to host"
   ansible.builtin.copy:
     src: "{{ item.source }}"
     dest: "/tmp/{{ item.source }}"
@@ -31,7 +31,7 @@
     - "{{ postgres.data }}"
   when: 'patroni.Role == "Leader"'
 
-- name: "postgresql | setup table for data"
+- name: "Postgresql | setup table for data"
   community.postgresql.postgresql_table:
     # host: "{{ ansible_host }}"
     name: "{{ item.table }}"
@@ -43,7 +43,7 @@
     - "{{ postgres.data }}"
   when: 'patroni.Role == "Leader"'
 
-- name: "postgresql | check table data"
+- name: "Postgresql | check table data"
   community.postgresql.postgresql_query:
     # host: "{{ ansible_host }}"
     db: "{{ item.database }}"
@@ -54,7 +54,7 @@
     - "{{ postgres.data }}"
   register: "dataquery"
 
-- name: "postgresql | import data"
+- name: "Postgresql | import data"
   community.postgresql.postgresql_copy:
     # host: "{{ ansible_host }}"
     copy_from: "/tmp/{{ item.source }}"

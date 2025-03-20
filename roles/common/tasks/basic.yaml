@@ -1,9 +1,9 @@
 ---
-- name: "yum | update"
-  ansible.builtin.yum:
+- name: "Yum | update"
+  ansible.builtin.dnf:
     update_cache: true
 
-- name: "install basic packages"
+- name: "Install basic packages"
   ansible.builtin.package:
     name: "{{ item }}"
     state: "present"
@@ -17,33 +17,33 @@
     - "man"
     - "epel-release"
   notify:
-    - "enable sshd"
-    - "enable firewalld"
+    - "Enable sshd"
+    - "Enable firewalld"
 
-- name: "sshd | render banner"
+- name: "Sshd | render banner"
   ansible.builtin.template:
     src: "sshd_banner.j2"
     dest: "/etc/ssh/banner"
     owner: "root"
     mode: "0644"
   notify:
-    - "reload sshd"
+    - "Reload sshd"
 
-- name: "sshd | render config template"
+- name: "Sshd | render config template"
   ansible.builtin.template:
     src: "sshd_config.j2"
     dest: "/etc/ssh/sshd_config"
     owner: "root"
     mode: "0644"
   notify:
-    - "reload sshd"
+    - "Reload sshd"
 
-- name: "firewalld | start service"
+- name: "Firewalld | start service"
   ansible.builtin.service:
     name: "firewalld"
     state: "started"
 
-- name: "firewalld | allow ssh access"
+- name: "Firewalld | allow ssh access"
   ansible.posix.firewalld:
     service: "ssh"
     permanent: true
@@ -56,9 +56,9 @@
     - "trusted"
     - "home"
   notify:
-    - "reload firewalld"
+    - "Reload firewalld"
 
-- name: "ensure the installed services are running"
+- name: "Ensure the installed services are running"
   ansible.builtin.service:
     name: "{{ item }}"
     state: "started"

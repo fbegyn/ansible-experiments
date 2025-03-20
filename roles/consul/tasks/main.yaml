@@ -1,22 +1,22 @@
 ---
-- name: "install and basics"
+- name: "Install and basics"
   tags: ["base"]
   ansible.builtin.import_tasks:
     file: "base.yaml"
 
-- name: "server setup"
+- name: "Server setup"
   tags: ["setup", "consul", "server"]
   ansible.builtin.import_tasks:
     file: "server.yaml"
   when: "consul.server"
 
-- name: "agent setup"
+- name: "Agent setup"
   tags: ["setup", "consul", "agent"]
   ansible.builtin.import_tasks:
     file: "agent.yaml"
   when: "not consul.server"
 
-- name: "ensure running service"
+- name: "Ensure running service"
   ansible.builtin.service:
     name: "{{ item }}"
     state: "started"

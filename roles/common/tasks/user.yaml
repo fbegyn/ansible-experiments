@@ -1,23 +1,23 @@
 ---
-- name: "create admins group"
+- name: "Create admins group"
   ansible.builtin.group:
     name: "admins"
     state: "present"
 
-- name: "create docker group"
+- name: "Create docker group"
   ansible.builtin.group:
     name: "docker"
     state: "present"
     gid: 1750
 
-- name: "create admins group in sudoers setup"
+- name: "Create admins group in sudoers setup"
   ansible.builtin.lineinfile:
     dest: "/etc/sudoers"
     state: "present"
     regexp: "^%admins"
     line: "%admins ALL=(ALL) NOPASSWD: ALL"
 
-- name: "create users"
+- name: "Create users"
   ansible.builtin.user:
     name: "{{ item.username }}"
     groups: "admins"
@@ -26,7 +26,7 @@
     password: "!"
   with_items: "{{ users }}"
 
-- name: "add ssh keys of the user"
+- name: "Add ssh keys of the user"
   ansible.posix.authorized_key:
     user: "{{ item.username }}"
     key: "{{ item.ssh_pub_keys | join('\n') }}"

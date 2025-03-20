@@ -1,5 +1,5 @@
 ---
-- name: "keepalived | patroni check script"
+- name: "Keepalived | patroni check script"
   ansible.builtin.template:
     src: "keepalived_patroni_check.sh.j2"
     dest: "/usr/libexec/keepalived/scripts/patroni_check.sh"
@@ -7,7 +7,7 @@
     owner: "keepalived_script"
     group: "keepalived_script"
 
-- name: "keepalived | patroni notify script"
+- name: "Keepalived | patroni notify script"
   ansible.builtin.template:
     src: "keepalived_patroni_check.sh.j2"
     dest: "/usr/libexec/keepalived/scripts/patroni_notify.sh"
@@ -15,11 +15,11 @@
     owner: "keepalived_script"
     group: "keepalived_script"
 
-- name: "keepalived | template config"
+- name: "Keepalived | template config"
   ansible.builtin.template:
     src: "keepalived.conf.j2"
     dest: "/etc/keepalived/keepalived.conf"
     mode: '0644'
   notify:
-    - "restart keepalived"
-    - "reload keepalived"
+    - "Restart keepalived"
+    - "Reload keepalived"
