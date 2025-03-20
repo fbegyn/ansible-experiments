@@ -2,8 +2,9 @@
 
 Probably the most complex role in here since this contains a lot of state things
 since ... well, it's a database. This spins up a Postgresql cluster through
-Patroni. Patroni adds some complexity, but in turn you get fully managed clusters
-with goog CLI tooling to trigger switchovers and failovers.
+[Patroni](https://patroni.readthedocs.io/en/latest/). Patroni adds some
+complexity, but in turn you get fully managed clusters with goog CLI tooling to
+trigger switchovers and failovers.
 
 1. It first and adds the postgres RPM repository to the host
 1. It disables the default shipped postgres from the main repo

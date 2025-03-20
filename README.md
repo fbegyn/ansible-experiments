@@ -25,6 +25,12 @@ and running.
   ```bash
   ansible-playbook ./webapp.yaml -i inventory
   ```
+  * [common](roles/common)
+  * [consul](roles/consul)
+  * [demo-app](roles/demo-app)
+  * [keepalived](roles/keepalived)
+  * [nginx](roles/nginx)
+  * [postgres](roles/postgres)
 
 ### Webapp
 
