@@ -13,6 +13,12 @@ For the first run on clean system, ansible should either use a `sudo` enabled
 user on the host (or not advised: use `root`) and the host should have sshd up
 and running.
 
+I heavily recommend running ansible from a centralised location (through CI,
+Ansible Tower, ...) since this would prevent divergent git commit being run
+against the environment. I would also recommend setting up
+[ara](https://ara.recordsansible.org) to have nice overviews of what changes
+ansible has done on nodes in a single place.
+
 ## Playbooks
 
 * `webapp.yaml`: This playbook sets up the basics of a web application with HA
