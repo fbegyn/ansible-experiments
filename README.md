@@ -7,10 +7,11 @@ look at the README of each role to see how to use it.
 ## Playbooks
 
 * `webapp.yaml`: This playbook sets up the basics of a web application with HA
-  components all around. It spins up a HA pair of HAproxy load balancers. Through
-  these load balancers the frontend and backend/db hosts are available. The
-  frontends are accesable through `80` and `443`, while a read path is available
-  at `5432` and a write path at `5433` for the DB.  
+  components all around. It spins up a HA pair of NGINX web servers. Through
+  these web servers, a small python flask web app is exposed. The web servers are
+  HA through a VIP that's available on all hosts where `nginx` is running. The DB
+  is available for reading on all nodes, but writing should only happen through
+  the VIP that follows the Patroni leader.  
   At the moment this is the only playbook and it can easily be spun up with
   ```
   ansible-playbook ./webapp.yaml -i inventory
